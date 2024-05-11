@@ -5,7 +5,7 @@ import AppKomponente from '@/components/AppKomponente.vue'
 
 <template>
   <main>
-    <TheWelcome />
+    <h1>Home</h1>
     <AppKomponente />
   </main>
   </template>
