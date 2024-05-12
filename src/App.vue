@@ -17,6 +17,6 @@ import AppNavbar from '@/components/AppNavbar.vue'
   #app {
     position: relative;
     padding-top: 50px;
-    overflow: hidden;
+
   }}
 </style>

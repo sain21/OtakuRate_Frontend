@@ -20,10 +20,14 @@
   display: flex;
   justify-content: space-around;
 }
-
 .navbar a {
   color: white;
   text-decoration: none;
+}
+
+.navbar a:hover {
+  color: black;
+  background-color: white;
 
 }
 </style>
