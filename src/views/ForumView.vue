@@ -8,9 +8,9 @@ import AnimeForum from '@/components/AnimeForum.vue'
     <p></p>
     <p></p>
     <p></p>
-<h3>Gib deine Bewertung zu einem Anime ab:</h3>
+    <h3>Gib deine Bewertung zu einem Anime ab:</h3>
     <div class="content">
-    <AnimeForum />
+      <AnimeForum />
     </div>
   </main>
 </template>

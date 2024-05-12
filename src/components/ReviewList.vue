@@ -26,18 +26,19 @@ export default {
 </script>
 <style scoped>
 .posts {
-  margin-left: 500px;
+  margin-left: 700px; /* Erhöhen Sie diesen Wert, um die Beiträge weiter rechts zu positionieren */
   width: 800%;
   height: auto;
-  font-size: 17px;
-margin-top: -65px;
+  max-height: 500px;
+  overflow-y: auto;
+  font-size: 20px; /* Erhöhen Sie diesen Wert, um die Größe der Beiträge zu erhöhen */
+  margin-top: -65px;
 
   .opinion-section {
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 10px;
-
   }
 }
 </style>

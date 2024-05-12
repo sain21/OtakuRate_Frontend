@@ -22,5 +22,6 @@ import { RouterView } from 'vue-router'
     align-items: center;
     height: 100vh;
   }
+
 }
 </style>
