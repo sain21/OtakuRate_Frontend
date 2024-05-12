@@ -8,13 +8,15 @@ import AnimeForum from '@/components/AnimeForum.vue'
     <p></p>
     <p></p>
     <p></p>
-<p>Gib deine Bewertung ab</p>
+<h3>Gib deine Bewertung zu einem Anime ab:</h3>
+    <div class="content">
     <AnimeForum />
+    </div>
   </main>
 </template>
 
 <style scoped>
-p {
+h3 {
   margin-bottom: 30px;
 }
 
@@ -23,4 +25,10 @@ h1 {
   width: 300%;
   margin: auto;
 }
+.content {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 </style>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import AppNavbar from '@/components/AppNavbar.vue'
+import { RouterView } from 'vue-router'
 </script>
 
 <template>
@@ -13,10 +14,13 @@ import AppNavbar from '@/components/AppNavbar.vue'
 </template>
 
 <style scoped>
+
 #app {
   #app {
-    position: relative;
-    padding-top: 50px;
-
-  }}
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+}
 </style>
