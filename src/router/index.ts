@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import ForumView from '../views/ForumView.vue' // Importieren Sie die ForumView
+import ForumView from '../views/ForumView.vue'
+// Importieren Sie die ForumView
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
