@@ -10,49 +10,29 @@
 </template>
 
 <script>
-import ReviewList from './ReviewList.vue';
-
 export default {
-  components: {
-    ReviewList
-  },
+  name: 'AnimeForum',
   data() {
     return {
-      editIndex: null,
-      newPost: {
-        anime: "",
-        rating: null,
-        opinion: ""
-      },
-      posts: []
-    };
+      animeRatings: null, // Hier speichern wir die Daten aus der GET-Route
+    }
+  },
+  created() {
+    this.loadAnimeRatings();
   },
   methods: {
-    addPost() {
-      if (this.newPost.anime && this.newPost.rating !== null && this.newPost.opinion) {
-        if (this.newPost.rating > 100) {
-          alert("Das Rating darf nicht über 100 sein.");
-          return;
-        }
-        if (this.editIndex !== null) {
-          this.posts.splice(this.editIndex, 1, { ...this.newPost });
-          this.editIndex = null;
-        } else {
-          this.posts.push({ ...this.newPost });
-        }
-        this.newPost = { anime: "", rating: null, opinion: "" };
-      }
-    },
-    deletePost(index) {
-      this.posts.splice(index, 1);
-
-
-    },
+    loadAnimeRatings() {
+      fetch('https://otakurate.onrender.com') // Ersetzen Sie dies durch Ihre GET-Route
+        .then(response => response.json())
+        .then(data => {
+          this.animeRatings = data;
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    }
   }
-
-
-
-};
+}
 </script>
 
 <style scoped>
