@@ -1,11 +1,15 @@
-import './assets/main.css'
+import { createApp } from 'vue';
+import { createRouter, createWebHistory } from 'vue-router';
+import App from './App.vue';
+import ForumView from './views/ForumView.vue';
 
-import { createApp } from 'vue'
-import App from './App.vue'
-import router from './router'
+const routes = [
+  { path: '/forum', component: ForumView }
+];
 
-const app = createApp(App)
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+});
 
-app.use(router)
-
-app.mount('#app')
+createApp(App).use(router).mount('#app');
