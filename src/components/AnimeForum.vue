@@ -34,14 +34,14 @@ export default {
       const requestOptions = {
         method: 'GET',
         redirect : 'follow'
-        }
-        fetch(endpoint, requestOptions)
+      }
+      fetch(endpoint, requestOptions)
         .then(response => response.json())
-          .then(result => result.forEach(thing => {
-            this.posts.push(thing)
-          }))
-          .catch(error => console.log('error', error));
-      },
+        .then(result => result.forEach(thing => {
+          this.posts.push(thing)
+        }))
+        .catch(error => console.log('error', error));
+    },
 
     addPost() {
       if (this.newPost.anime && this.newPost.rating !== null && this.newPost.opinion) {
@@ -60,13 +60,11 @@ export default {
     },
     deletePost(index) {
       this.posts.splice(index, 1);
-
-
     },
+  },
+  mounted() {
+    this.loadThings();
   }
-
-
-
 };
 </script>
 
