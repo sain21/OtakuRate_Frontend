@@ -58,7 +58,7 @@ export default {
   setup() {
     const items = ref([]);
 
-    async function loadThings(owner = '') {
+    async function loadThings() {
       const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL;
       const endpoint = `${baseUrl}/anime/rating`;
       const response = await axios.get(endpoint);
@@ -67,7 +67,6 @@ export default {
         items.value.push(thing);
       });
     }
-
     return {
       items,
       loadThings,
