@@ -1,5 +1,11 @@
-<script setup lang="ts">
+<script>
 import AnimeForum from '@/components/AnimeForum.vue'
+export default {
+  name: 'ForumView',
+  components: {
+    AnimeForum
+  }
+}
 </script>
 
 <template>
