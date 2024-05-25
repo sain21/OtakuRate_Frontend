@@ -28,6 +28,20 @@ export default {
     };
   },
   methods: {
+    loadThings(){
+      const endpoint = 'http://localhost:8080/anime/rating'
+      const requestOptions = {
+        method: 'GET',
+        redirect : 'follow'
+        }
+        fetch(endpoint, requestOptions)
+        .then(response => response.json())
+          .then(result => result.forEach(thing => {
+            this.posts.push(thing)
+          }))
+          .catch(error => console.log('error', error));
+      },
+
     addPost() {
       if (this.newPost.anime && this.newPost.rating !== null && this.newPost.opinion) {
         if (this.newPost.rating > 100) {
