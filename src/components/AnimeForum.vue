@@ -11,8 +11,6 @@
 
 <script>
 import ReviewList from './ReviewList.vue';
-import { ref } from 'vue';
-import axios from 'axios';
 
 export default {
   components: {
@@ -30,10 +28,20 @@ export default {
     };
   },
   methods: {
-
-
-
-},
+    loadThings(){
+      const baseUrl = process.env.VUE.APP_BACKEND_BASE_URL()
+      const endpoint = baseUrl + "/anime/rating"
+      const requestOptions = {
+        method: 'GET',
+        redirect : 'follow'
+        }
+        fetch(endpoint, requestOptions)
+        .then(response => response.json())
+          .then(result => result.forEach(thing => {
+            this.posts.push(thing)
+          }))
+          .catch(error => console.log('error', error));
+      },
 
     addPost() {
       if (this.newPost.anime && this.newPost.rating !== null && this.newPost.opinion) {
@@ -55,33 +63,11 @@ export default {
 
 
     },
-  setup() {
-    const items = ref([]);
-
-    async function loadThings() {
-      const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL;
-      const endpoint = `${baseUrl}/anime/rating`;
-      const response = await axios.get(endpoint);
-      const responseData = response.data;
-      responseData.forEach((thing) => {
-        items.value.push(thing);
-      });
-    }
-    return {
-      items,
-      loadThings,
-    };
-  },
-
-  mounted() {
-    this.loadThings();
   }
-}
 
 
 
-
-
+};
 </script>
 
 <style scoped>
