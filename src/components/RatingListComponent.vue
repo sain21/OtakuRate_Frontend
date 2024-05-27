@@ -73,6 +73,9 @@ const addNewPost = () => {
   ratingField.value = 0;
   opinionField.value = '';
 }
+onMounted(() => {
+  loadThings();
+});
 </script>
 
 
