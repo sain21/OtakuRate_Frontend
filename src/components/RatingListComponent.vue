@@ -2,9 +2,9 @@
   <h3> {{ title }} </h3>
   <div>
     <input v-model="animeField" placeholder="Anime Name" type="text">
-    <input v-model="ratingField" placeholder="Rating" type="number" @keyup.enter="save()">
-    <input v-model="opinionField" placeholder="Your Opinion" type="text" @keyup.enter="save()">
-    <button type="button" @click="save()">Save</button>
+    <input v-model="ratingField" placeholder="Rating" type="number" @keyup.enter="addNewPost()">
+    <input v-model="opinionField" placeholder="Your Opinion" type="text" @keyup.enter="addNewPost()">
+    <button type="button" @click="addNewPost()">Save</button>
   </div>
   <div>
     <table>
@@ -68,22 +68,13 @@ async function loadThings (owner: string = '') {
   })
 }
 
-async function save () {
-  const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL // 'http://localhost:8080' in dev mode
-  const endpoint = baseUrl + '/rate'
-  const data: Post = {
-    anime: animeField.value,
-    rating: ratingField.value,
-    opinion: opinionField.value,
-  }
-  try {
-    const response: AxiosResponse = await axios.post(endpoint, data);
-    const responseData: Post = response.data;
-    console.log('Success:', responseData)
-       posts.value.push(responseData)
-  } catch (error) {
-    console.error('Error saving post:', error)
-  }
+const addNewPost = () => {
+  let newPost: Post = { anime: animeField.value, rating: ratingField.value, opinion: opinionField.value };
+  posts.value.push(newPost);
+  animeField.value = '';
+  ratingField.value = 0;
+  opinionField.value = '';
+
 }
 
 
