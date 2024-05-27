@@ -10,12 +10,24 @@ let newAnime = ref('');
 let newRating = ref(0);
 let newOpinion = ref('');
 
-const addNewPost = () => {
+const addNewPost = async () => {
   let newPost: Post = { anime: newAnime.value, rating: newRating.value, opinion: newOpinion.value };
   posts.value.push(newPost);
   newAnime.value = '';
   newRating.value = 0;
   newOpinion.value = '';
+  // Send the new post to the server
+  const baseURL = import.meta.env.VITE_APP_BACKEND_BASE_URL;
+  const endpoint = baseURL + '/posts';
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(newPost),
+  };
+  const response = await fetch(endpoint, requestOptions);
+  if (!response.ok) {
+    console.error('Failed to save the new post to the server');
+  }
 }
 
 const props = defineProps({
