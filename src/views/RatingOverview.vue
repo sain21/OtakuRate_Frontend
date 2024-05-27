@@ -17,7 +17,7 @@ const addNewPost = () => {
   newOpinion.value = '';
 }
 
-axios.get(import.meta.env.VITE_BACKEND_URL + '/anime/rating')
+axios.get(import.meta.env.VITE_BACKEND_URL + 'rate')
   .then(function (response) {
     // handle success
     // console.log("response")
