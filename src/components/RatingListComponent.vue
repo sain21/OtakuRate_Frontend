@@ -9,10 +9,10 @@
   <div>
     <table>
       <thead>
-      <tr>
-        <th>Anime</th>
-        <th>Rating</th>
-        <th>Opinion</th>
+      <tr v-for="post in posts" :key="post.anime">
+        <td>{{post.anime}}</td>
+        <td>{{post.rating}}</td>
+        <td>{{post.opinion}}</td>
       </tr>
       </thead>
       <tbody>
