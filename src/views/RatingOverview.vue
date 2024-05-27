@@ -2,6 +2,7 @@
 import type { Post } from '@/model/model';
 import { ref } from 'vue';
 import axios from 'axios';
+import type { AxiosResponse } from 'axios';
 import RatingListComponent from '@/components/RatingListComponent.vue';
 
 let posts = ref<Post[]>([]);
@@ -19,22 +20,19 @@ const addNewPost = () => {
 
 console.log("Backend URL: ", import.meta.env.VITE_BACKEND_URL);
 
-axios.get(import.meta.env.VITE_BACKEND_URL + 'rate')
-  .then(function (response) {
-    // handle success
-    console.log("Response data: ", response.data);
-    posts.value = response.data;
-  })
-  .catch(function (error) {
-    // handle error
-    console.log("Error: ", error);
-  })
-  .finally(function () {
-    // always executed
+const loadThings = async (owner: string = '') => {
+  const baseUrl = import.meta.env.VITE_BACKEND_URL
+  const endpoint = baseUrl + '/rate' + '?owner=' + owner
+  const response: AxiosResponse = await axios.get(endpoint);
+  const responseData: Post[] = response.data;
+  responseData.forEach((post: Post) => {
+    posts.value.push(post)
   });
+}
+
+loadThings();
 
 </script>
-
 <template>
   <h1>Anime Übersicht</h1>
   <RatingListComponent v-model="posts"></RatingListComponent>
