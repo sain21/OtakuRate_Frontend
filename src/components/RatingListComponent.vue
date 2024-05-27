@@ -18,12 +18,10 @@ const addNewPost = () => {
   newOpinion.value = '';
 }
 
-
-
-
 const props = defineProps({
   modelValue: Array as () => Post[]
 })
+
 const loadThings = async (owner: string = '') => {
   const baseURL = import.meta.env.VITE_BACKEND_URL
   const endpoint = baseURL + '/posts';
@@ -51,7 +49,6 @@ loadThings();
     <div>Opinion: {{ post.opinion }}</div>
   </div>
   <h1>Anime Übersicht</h1>
-  <RatingListComponent v-model="posts"></RatingListComponent>
 
   <div>
     <label>Anime Name</label>
