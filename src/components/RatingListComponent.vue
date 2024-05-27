@@ -61,19 +61,11 @@ onMounted(async () => {
 async function loadThings (owner: string = '') {
   const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL // 'http://localhost:8080' in dev mode
   const endpoint = baseUrl + '/rate' + '?owner=' + owner
-  try {
-    const response: AxiosResponse = await axios.get(endpoint);
-    const responseData: Post[] = response.data;
-    if (Array.isArray(responseData)) {
-      responseData.forEach((post: Post) => {
-        posts.value.push(post)
-      })
-    } else {
-      console.error('Unexpected data format:', responseData)
-    }
-  } catch (error) {
-    console.error('Error loading posts:', error)
-  }
+  const response: AxiosResponse = await axios.get(endpoint);
+  const responseData: Post[] = response.data;
+  responseData.forEach((post: Post) => {
+    posts.value.push(post)
+  })
 }
 
 async function save () {
@@ -84,9 +76,15 @@ async function save () {
     rating: ratingField.value,
     opinion: opinionField.value,
   }
-  const response: AxiosResponse = await axios.post(endpoint, data);
-  const responseData: Post = response.data;
-  console.log('Success:', responseData)
+  try {
+    const response: AxiosResponse = await axios.post(endpoint, data);
+    const responseData: Post = response.data;
+    console.log('Success:', responseData)
+
+    posts.value.push(responseData)
+  } catch (error) {
+    console.error('Error saving post:', error)
+  }
 }
 </script>
 
