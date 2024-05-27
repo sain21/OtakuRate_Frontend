@@ -43,8 +43,6 @@ import type {AxiosResponse} from 'axios'
 import type {Post} from '@/model/model';
 import type {Ref} from 'vue'
 
-
-
 defineProps<{
   title: string
 }>()
@@ -53,19 +51,19 @@ const animeField = ref('')
 const ratingField = ref(0)
 const opinionField = ref('')
 
-onMounted(async () => {
-  await loadThings()
-})
-
-
-async function loadThings (owner: string = '') {
+const loadThings = () => {
   const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL
-  const endpoint = baseUrl + '/rate' + '?owner=' + owner
-  const response: AxiosResponse = await axios.get(endpoint);
-  const responseData: Post[] = response.data;
-  responseData.forEach((post: Post) => {
-    posts.value.push(post)
-  })
+  const endpoint = baseUrl + '/rate'
+  const requestOptions: RequestInit ={
+    method : 'GET',
+    redirect : 'follow'
+  }
+  fetch(endpoint, requestOptions)
+    .then(response => response.json())
+    .then(result => result.forEach((post: Post) => {
+      posts.value.push(post)
+    }))
+    .catch(error => console.log('error', error));
 }
 
 const addNewPost = () => {
@@ -74,10 +72,7 @@ const addNewPost = () => {
   animeField.value = '';
   ratingField.value = 0;
   opinionField.value = '';
-
 }
-
-
 </script>
 
 
