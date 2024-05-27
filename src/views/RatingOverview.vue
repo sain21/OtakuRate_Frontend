@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Post } from '@/model/model';
 import { ref } from 'vue';
+import axios from 'axios';
 import RatingListComponent from '@/components/RatingListComponent.vue';
 
 let posts = ref<Post[]>([]);
@@ -15,6 +16,22 @@ const addNewPost = () => {
   newRating.value = 0;
   newOpinion.value = '';
 }
+
+axios.get(import.meta.env.VITE_BACKEND_URL + '/anime/rating')
+  .then(function (response) {
+    // handle success
+    // console.log("response")
+    console.log(response);
+    posts.value = response.data
+  })
+  .catch(function (error) {
+    // handle error
+    console.log(error);
+  })
+  .finally(function () {
+    // always executed
+  });
+
 </script>
 
 <template>
