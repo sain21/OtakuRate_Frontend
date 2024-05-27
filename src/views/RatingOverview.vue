@@ -20,13 +20,12 @@ const addNewPost = () => {
 axios.get(import.meta.env.VITE_BACKEND_URL + 'rate')
   .then(function (response) {
     // handle success
-    // console.log("response")
-    console.log(response);
-    posts.value = response.data
+    console.log("Response data: ", response.data);
+    posts.value = response.data;
   })
   .catch(function (error) {
     // handle error
-    console.log(error);
+    console.log("Error: ", error);
   })
   .finally(function () {
     // always executed
