@@ -9,10 +9,10 @@
   <div>
     <table>
       <thead>
-      <tr v-for="post in posts" :key="post.anime">
-        <td>{{post.anime}}</td>
-        <td>{{post.rating}}</td>
-        <td>{{post.opinion}}</td>
+      <tr>
+        <th>Anime</th>
+        <th>Rating</th>
+        <th>Opinion</th>
       </tr>
       </thead>
       <tbody>
@@ -59,7 +59,7 @@ onMounted(async () => {
 
 
 async function loadThings (owner: string = '') {
-  const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL // 'http://localhost:8080' in dev mode
+  const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL
   const endpoint = baseUrl + '/rate' + '?owner=' + owner
   const response: AxiosResponse = await axios.get(endpoint);
   const responseData: Post[] = response.data;
@@ -80,12 +80,13 @@ async function save () {
     const response: AxiosResponse = await axios.post(endpoint, data);
     const responseData: Post = response.data;
     console.log('Success:', responseData)
-
-    posts.value.push(responseData)
+       posts.value.push(responseData)
   } catch (error) {
     console.error('Error saving post:', error)
   }
 }
+
+
 </script>
 
 
