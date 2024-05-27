@@ -53,8 +53,10 @@ const animeField = ref('')
 const ratingField = ref(0)
 const opinionField = ref('')
 
-const $auth = useAuth()
-const email = ref('')
+onMounted(async () => {
+  await loadThings()
+})
+
 
 async function loadThings (owner: string = '') {
   const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL // 'http://localhost:8080' in dev mode
@@ -83,5 +85,14 @@ async function save () {
 
 
 <style scoped>
-
+h3 {
+  text-align: center;
+}
+table {
+  margin-left: auto;
+  margin-right: auto;
+}
+button {
+  color: blue;
+}
 </style>
