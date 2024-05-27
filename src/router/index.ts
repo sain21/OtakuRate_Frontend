@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import ForumView from '../views/ForumView.vue'
 // Importieren Sie die ForumView
 
 const router = createRouter({
@@ -20,9 +19,9 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue')
     },
     {
-      path: '/forum', // Definieren Sie den Pfad für das Forum
-      name: 'forum', // Geben Sie der Route einen Namen
-      component: ForumView // Verwenden Sie die ForumView-Komponente für diese Route
+      path: '/rate', // Definieren Sie den Pfad für das Forum
+      name: 'rate', // Geben Sie der Route einen Namen
+      component: () => import ('../views/RatingOverview.vue') // Verwenden Sie die ForumView-Komponente für diese Route
     }
   ]
 })
