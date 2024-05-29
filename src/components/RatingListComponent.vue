@@ -40,7 +40,7 @@
 import {ref, onMounted} from 'vue'
 import axios from 'axios'
 import type {AxiosResponse} from 'axios'
-import type {Post} from '@/model/model'
+import type {Post} from '@/model/model';
 import type {Ref} from 'vue'
 
 
