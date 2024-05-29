@@ -19,20 +19,16 @@
       <tr v-if="posts.length === 0">
         <td colspan="3">No ratings yet</td>
       </tr>
-      <tr v-for="post in posts" :key="post.anime">
-        <td>{{post.anime}}</td>
-        <td>{{post.rating}}</td>
-        <td>{{post.opinion}}</td>
-      </tr>
-      <tr>
-        <td>{{ animeField }}</td>
-        <td>{{ ratingField }}</td>
-        <td>{{ opinionField }}</td>
+      <tr v-for="animeRating in posts" :key="animeRating.anime">
+        <td>{{animeRating.anime}}</td>
+        <td>{{animeRating.rating}}</td>
+        <td>{{animeRating.opinion}}</td>
       </tr>
       </tbody>
     </table>
   </div>
 </template>
+
 
 
 
