@@ -1,5 +1,5 @@
 export type Post = {
-  anime: string,
+  animeTitle: string,
   rating: number,
-  opinion: string
+  experience: string
 }

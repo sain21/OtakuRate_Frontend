@@ -19,10 +19,10 @@
       <tr v-if="posts.length === 0">
         <td colspan="3">No ratings yet</td>
       </tr>
-      <tr v-for="animeRating in posts" :key="animeRating.anime">
-        <td>{{animeRating.anime}}</td>
+      <tr v-for="animeRating in posts" :key="animeRating.animeTitle">
+        <td>{{animeRating.animeTitle}}</td>
         <td>{{animeRating.rating}}</td>
-        <td>{{animeRating.opinion}}</td>
+        <td>{{animeRating.experience}}</td>
       </tr>
       </tbody>
     </table>
@@ -66,12 +66,11 @@ async function loadThings (owner: string = '') {
 }
 
 const addNewPost = () => {
-  let newPost: Post = { anime: animeField.value, rating: ratingField.value, opinion: opinionField.value };
+  let newPost: Post = { animeTitle: animeField.value, rating: ratingField.value, experience: opinionField.value };
   posts.value.push(newPost);
   animeField.value = '';
   ratingField.value = 0;
   opinionField.value = '';
-
 }
 
 
