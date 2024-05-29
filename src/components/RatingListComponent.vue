@@ -59,7 +59,7 @@ onMounted(async () => {
 
 
 async function loadThings (owner: string = '') {
-  const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL
+  const baseUrl = import.meta.env.VITE_APP_BACKEND_BASE_URL
   const endpoint = baseUrl + '/rate' + '?owner=' + owner
   const response: AxiosResponse = await axios.get(endpoint);
   const responseData: Post[] = response.data;
