@@ -63,15 +63,10 @@ async function loadThings (owner: string = '') {
   const endpoint = baseUrl + '/rate'
   const response: AxiosResponse = await axios.get(endpoint);
   console.log(response.data);
-  if (Array.isArray(response.data)) {
-    const responseData: Post[] = response.data;
-    responseData.forEach((post: Post) => {
-      posts.value.push(post)
-    })
-  } else {
-    console.error('Expected array but received:', response.data);
-  }
-
+  const responseData: Post[] = response.data;
+  responseData.forEach((post: Post) => {
+    posts.value.push(post)
+  })
 }
 
 const addNewPost = () => {
