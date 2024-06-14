@@ -65,7 +65,7 @@ animeTitle: this.animeField,
 rating: parseFloat(this.ratingField),
 experience: this.opinionField
       };
-      axios.post(import.meta.env.VITE_BACKEND_URL, newEntry)
+      axios.post(import.meta.env.VITE_BACKEND_URL + '/rate', newEntry)
         .then(response => {
           this.animeField = '';
           this.ratingField = '';
