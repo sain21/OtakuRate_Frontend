@@ -31,49 +31,63 @@
 
 
 
+<script>
+import axios from 'axios';
 
-<script setup lang="ts">
-import {ref, onMounted} from 'vue'
-import axios from 'axios'
-import type {AxiosResponse} from 'axios'
-import type {Post} from '@/model/model';
-import type {Ref} from 'vue'
+export default {
+  name: 'RatingEntries',
+  data() {
+    return {
+      animeField: '',
+      ratingField: '',
+      opinionField: '',
+      posts: []
+    }
+  },
+  created() {
+    this.fetchEntries();
+  },
+  methods: {
+    fetchEntries() {
+      axios.get(import.meta.env.VITE_BACKEND_URL )
+        .then(function (response) {
+          this.posts= response.data;
+        }.bind(this))
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+    addNewPost() {
+      const newEntry = {
+animeTitle: this.animeField,
+rating: parseFloat(this.ratingField),
+experience: this.opinionField
+      };
+      axios.post(import.meta.env.VITE_BACKEND_URL, newEntry)
+        .then(response => {
+          this.animeField = '';
+          this.ratingField = '';
+          this.opinionField = '';
+          this.fetchEntries();
+        })
+        .catch(error => {
+          console.error('Error adding entry:', error);
+        });
 
 
 
-defineProps<{
-  title: string
-}>()
-const posts: Ref<Post[]> = ref([])
-const animeField = ref('')
-const ratingField = ref(0)
-const opinionField = ref('')
-
-onMounted(async () => {
-  await loadThings()
-})
-
-
-async function loadThings (owner: string = '') {
-  const baseUrl = import.meta.env.VITE_APP_BACKEND_BASE_URL
-  const endpoint = baseUrl + '/rate'
-  const response: AxiosResponse = await axios.get(endpoint);
-  console.log(response.data);
-  const responseData: Post[] = response.data;
-  responseData.forEach((post: Post) => {
-    posts.value.push(post)
-  })
+    },
+    deleteEntry(entryId) {
+      axios.delete(import.meta.env.VITE_BACKEND_URL + '/entries/' + entryId)
+        .then(() => {
+          this.fetchEntries();
+        })
+        .catch(error => {
+          console.error('Error deleting entry:', error);
+        });
+    }
+  }
 }
-
-const addNewPost = () => {
-  let newPost: Post = { animeTitle: animeField.value, rating: ratingField.value, experience: opinionField.value };
-  posts.value.push(newPost);
-  animeField.value = '';
-  ratingField.value = 0;
-  opinionField.value = '';
-}
-
-
 </script>
 
 
