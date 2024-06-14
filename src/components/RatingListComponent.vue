@@ -70,7 +70,7 @@ experience: this.opinionField
           this.animeField = '';
           this.ratingField = '';
           this.opinionField = '';
-          this.fetchEntries();
+          this.fetchPosts();
         })
         .catch(error => {
           console.error('Error adding entry:', error);
