@@ -19,7 +19,7 @@
       <tr v-if="posts.length === 0">
         <td colspan="3">No ratings yet</td>
       </tr>
-      <tr v-for="animeRating in posts" :key="animeRating.animeTitle">
+      <tr v-for="animeRating in posts" :key="animeRating.id">
         <td>{{animeRating.animeTitle}}</td>
         <td>{{animeRating.rating}}</td>
         <td>{{animeRating.experience}}</td>
@@ -35,7 +35,7 @@
 import axios from 'axios';
 
 export default {
-  name: 'RatingEntries',
+  name: 'RatingListComponent',
   data() {
     return {
       animeField: '',
