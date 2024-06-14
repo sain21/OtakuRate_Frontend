@@ -2,9 +2,9 @@
   <h3> {{ title }} </h3>
   <div>
     <input v-model="animeField" placeholder="Anime Name" type="text">
-    <input v-model="ratingField" placeholder="Rating" type="number" @keyup.enter="addNewPost()">
-    <input v-model="opinionField" placeholder="Your Opinion" type="text" @keyup.enter="addNewPost()">
-    <button type="button" @click="addNewPost()">Save</button>
+    <input v-model="ratingField" placeholder="Rating" type="number" >
+    <input v-model="opinionField" placeholder="Your Opinion" type="text" >
+    <button type="button" @click="addNewPost">Save</button>
   </div>
   <div>
     <table>
@@ -57,6 +57,8 @@ export default {
           console.log(error);
         });
     },
+
+
     addNewPost() {
       const newEntry = {
 animeTitle: this.animeField,
