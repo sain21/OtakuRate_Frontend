@@ -49,7 +49,7 @@ export default {
   },
   methods: {
     fetchPosts() {
-      axios.get(import.meta.env.VITE_BACKEND_URL + '/rate')
+      axios.get(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/rate')
         .then(function (response) {
           this.posts= response.data;
         }.bind(this))
@@ -65,7 +65,7 @@ animeTitle: this.animeField,
 rating: parseFloat(this.ratingField),
 experience: this.opinionField
       };
-      axios.post(import.meta.env.VITE_BACKEND_URL + '/rate', newEntry)
+      axios.post(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/rate', newEntry)
         .then(response => {
           this.animeField = '';
           this.ratingField = '';
@@ -80,7 +80,7 @@ experience: this.opinionField
 
     },
     deleteEntry(entryId) {
-      axios.delete(import.meta.env.VITE_BACKEND_URL + '/entries/' + entryId)
+      axios.delete(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/entries/' + entryId)
         .then(() => {
           this.fetchEntries();
         })
