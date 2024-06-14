@@ -4,7 +4,7 @@
     <input v-model="animeField" placeholder="Anime Name" type="text">
     <input v-model="ratingField" placeholder="Rating" type="number" >
     <input v-model="opinionField" placeholder="Your Opinion" type="text" >
-    <button type="button" @click="addNewPost">Save</button>
+    <button @click="addNewPost">Save</button>
   </div>
   <div>
     <table>
@@ -45,11 +45,11 @@ export default {
     }
   },
   created() {
-    this.fetchEntries();
+    this.fetchPosts();
   },
   methods: {
-    fetchEntries() {
-      axios.get(import.meta.env.VITE_BACKEND_URL )
+    fetchPosts() {
+      axios.get(import.meta.env.VITE_BACKEND_URL + '/rate')
         .then(function (response) {
           this.posts= response.data;
         }.bind(this))
