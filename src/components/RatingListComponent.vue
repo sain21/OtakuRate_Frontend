@@ -1,7 +1,10 @@
 <template>
   <h3> {{ title }} </h3>
   <div>
-    <input v-model="animeField" placeholder="Anime Name" type="text">
+    <input v-model="query" @input="searchAnime" placeholder="Search Anime...">
+    <ul v-if="results.length">
+      <li v-for="anime in results" :key="anime.mal_id">{{ anime.title }}</li>
+    </ul>
     <input v-model="ratingField" placeholder="Rating" type="number" >
     <input v-model="opinionField" placeholder="Your Opinion" type="text" >
     <button @click="addNewPost">Save</button>
@@ -41,7 +44,9 @@ export default {
       animeField: '',
       ratingField: '',
       opinionField: '',
-      posts: []
+      posts: [],
+      query: '',
+      results: []
     }
   },
   created() {
@@ -57,7 +62,13 @@ export default {
           console.log(error);
         });
     },
-
+    async searchAnime() {
+      if (this.query.length > 2) {
+        const response = await fetch(`/searchAnime?query=${this.query}`);
+        const data = await response.json();
+        this.results = data.data;
+      }
+    },
 
     addNewPost() {
       const newEntry = {
