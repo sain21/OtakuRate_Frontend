@@ -1,10 +1,7 @@
 <template>
   <h3> {{ title }} </h3>
   <div>
-    <input v-model="query" @input="searchAnime" placeholder="Search Anime...">
-    <ul v-if="results.length">
-      <li v-for="anime in results" :key="anime.mal_id">{{ anime.title }}</li>
-    </ul>
+    <input v-model="animeField" placeholder="Anime Name" type="text">
     <input v-model="ratingField" placeholder="Rating" type="number" >
     <input v-model="opinionField" placeholder="Your Opinion" type="text" >
     <button @click="addNewPost">Save</button>
@@ -53,10 +50,10 @@ export default {
   methods: {
     fetchPosts() {
       axios.get(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/rate')
-        .then(function (response) {
-          this.posts= response.data;
+        .then(function(response) {
+          this.posts = response.data;
         }.bind(this))
-        .catch(function (error) {
+        .catch(function(error) {
           console.log(error);
         });
     },
@@ -64,9 +61,9 @@ export default {
 
     addNewPost() {
       const newEntry = {
-animeTitle: this.animeField,
-rating: parseFloat(this.ratingField),
-experience: this.opinionField
+        animeTitle: this.animeField,
+        rating: parseFloat(this.ratingField),
+        experience: this.opinionField
       };
       axios.post(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/rate', newEntry)
         .then(response => {
@@ -78,7 +75,6 @@ experience: this.opinionField
         .catch(error => {
           console.error('Error adding entry:', error);
         });
-
 
 
     },
@@ -96,15 +92,16 @@ experience: this.opinionField
 </script>
 
 
-
 <style scoped>
 h3 {
   text-align: center;
 }
+
 table {
   margin-left: auto;
   margin-right: auto;
 }
+
 button {
   color: blue;
 }
