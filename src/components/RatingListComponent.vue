@@ -1,12 +1,12 @@
 <template>
-  <h3> {{ title }} </h3>
+  <h3>{{ title }}</h3>
   <div>
     <input v-model="query" @input="searchAnime" placeholder="Search Anime...">
     <ul v-if="results.length">
       <li v-for="anime in results" :key="anime.mal_id">{{ anime.title }}</li>
     </ul>
-    <input v-model="ratingField" placeholder="Rating" type="number" >
-    <input v-model="opinionField" placeholder="Your Opinion" type="text" >
+    <input v-model="ratingField" placeholder="Rating" type="number">
+    <input v-model="opinionField" placeholder="Your Opinion" type="text">
     <button @click="addNewPost">Save</button>
   </div>
   <div>
@@ -16,23 +16,25 @@
         <th>Anime</th>
         <th>Rating</th>
         <th>Opinion</th>
+        <th>Actions</th>
       </tr>
       </thead>
       <tbody>
       <tr v-if="posts.length === 0">
-        <td colspan="3">No ratings yet</td>
+        <td colspan="4">No ratings yet</td>
       </tr>
       <tr v-for="animeRating in posts" :key="animeRating.id">
-        <td>{{animeRating.animeTitle}}</td>
-        <td>{{animeRating.rating}}</td>
-        <td>{{animeRating.experience}}</td>
+        <td>{{ animeRating.animeTitle }}</td>
+        <td>{{ animeRating.rating }}</td>
+        <td>{{ animeRating.experience }}</td>
+        <td>
+          <button @click="deleteEntry(animeRating.id)">Delete</button>
+        </td>
       </tr>
       </tbody>
     </table>
   </div>
 </template>
-
-
 
 <script>
 import axios from 'axios';
@@ -55,26 +57,25 @@ export default {
   methods: {
     fetchPosts() {
       axios.get(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/rate')
-        .then(function (response) {
-          this.posts= response.data;
-        }.bind(this))
-        .catch(function (error) {
+        .then(response => {
+          this.posts = response.data;
+        })
+        .catch(error => {
           console.log(error);
         });
     },
     async searchAnime() {
       if (this.query.length > 2) {
-        const response = await fetch(`/searchAnime?query=${this.query}`);
+        const response = await fetch(`${import.meta.env.VITE_APP_BACKEND_BASE_URL}/rate/searchAnime?query=${this.query}`);
         const data = await response.json();
         this.results = data.data;
       }
     },
-
     addNewPost() {
       const newEntry = {
-animeTitle: this.animeField,
-rating: parseFloat(this.ratingField),
-experience: this.opinionField
+        animeTitle: this.animeField,
+        rating: parseFloat(this.ratingField),
+        experience: this.opinionField
       };
       axios.post(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/rate', newEntry)
         .then(response => {
@@ -86,14 +87,11 @@ experience: this.opinionField
         .catch(error => {
           console.error('Error adding entry:', error);
         });
-
-
-
     },
     deleteEntry(entryId) {
-      axios.delete(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/entries/' + entryId)
+      axios.delete(`${import.meta.env.VITE_APP_BACKEND_BASE_URL}/rate/${entryId}`)
         .then(() => {
-          this.fetchEntries();
+          this.fetchPosts();
         })
         .catch(error => {
           console.error('Error deleting entry:', error);
@@ -103,16 +101,16 @@ experience: this.opinionField
 }
 </script>
 
-
-
 <style scoped>
 h3 {
   text-align: center;
 }
+
 table {
   margin-left: auto;
   margin-right: auto;
 }
+
 button {
   color: blue;
 }
