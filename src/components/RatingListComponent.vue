@@ -24,6 +24,7 @@
         <td>{{animeRating.rating}}</td>
         <td>{{animeRating.experience}}</td>
         <td><button @click="deleteEntry(animeRating.id)">Löschen</button></td>
+        <td><button @click="updateEntry(animeRating.id)">Update</button></td>
       </tr>
       </tbody>
     </table>
@@ -86,6 +87,23 @@ export default {
         })
         .catch(error => {
           console.error('Error deleting entry:', error);
+        });
+    },
+    updateEntry(entryId) {
+      const updatedEntry = {
+        animeTitle: this.animeField,
+        rating: parseFloat(this.ratingField),
+        experience: this.opinionField
+      };
+      axios.put(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/rate/' + entryId, updatedEntry)
+        .then(() => {
+          this.animeField = '';
+          this.ratingField = '';
+          this.opinionField = '';
+          this.fetchPosts();
+        })
+        .catch(error => {
+          console.error('Error updating entry:', error);
         });
     }
   }
