@@ -80,7 +80,7 @@ export default {
 
     },
     deleteEntry(entryId) {
-      axios.delete(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/entries/' + entryId)
+      axios.delete(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/rate/' + entryId)
         .then(() => {
           this.fetchPosts();
         })
