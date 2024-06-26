@@ -23,6 +23,7 @@
         <td>{{animeRating.animeTitle}}</td>
         <td>{{animeRating.rating}}</td>
         <td>{{animeRating.experience}}</td>
+        <td><button @click="deleteEntry(animeRating.id)">Löschen</button></td>
       </tr>
       </tbody>
     </table>
