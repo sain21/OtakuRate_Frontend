@@ -5,7 +5,7 @@ import RatingListComponent from '@/components/RatingListComponent.vue'
 
 <template>
   <main>
-    <RatingListComponent title="Anime Übersicht"/>
+    <RatingListComponent title="Ratingübersicht"/>
   </main>
 </template>
 

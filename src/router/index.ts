@@ -22,7 +22,12 @@ const router = createRouter({
       path: '/rate', // Definieren Sie den Pfad für das Forum
       name: 'rate', // Geben Sie der Route einen Namen
       component: () => import ('../views/RatingOverview.vue') // Verwenden Sie die ForumView-Komponente für diese Route
-    }
+    },
+    {
+      path: '/animes',
+      name: 'animes',
+      component: () => import('../views/AnimeListView.vue')
+    },
   ]
 })
 
