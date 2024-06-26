@@ -82,7 +82,7 @@ export default {
     deleteEntry(entryId) {
       axios.delete(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/entries/' + entryId)
         .then(() => {
-          this.fetchEntries();
+          this.fetchPosts();
         })
         .catch(error => {
           console.error('Error deleting entry:', error);
