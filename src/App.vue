@@ -4,7 +4,6 @@ import { RouterView } from 'vue-router'
 </script>
 
 <template>
-  <div style="color:red">Hallo Welt!</div>
   <header>
     <RouterLink to="/">Home</RouterLink>
     <RouterLink to="/about">About</RouterLink>
