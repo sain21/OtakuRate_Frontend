@@ -14,15 +14,13 @@
     </form>
     </header>
     <main>
-      <div class="cards" v-if="animelist.length>0">
-<CardComponent
-  v-for="anime in animelist"
-  :key="anime.mal_id"
-anime="anime" />
-
-
-
-  </div>
+      <div class="cards" v-if="animelist.length > 0">
+        <CardComponent
+          v-for="anime in animelist"
+          :key="anime.mal_id"
+          :anime="anime"
+        />
+      </div>
   <div class="no-results" v-else>
     <h3>No results found</h3>
   </div>
@@ -35,27 +33,37 @@ import { ref } from 'vue';
 import CardComponent from '@/components/CardComponent.vue';
 
 export default {
+  components: {
+    CardComponent,
+  },
   setup() {
     const search_query = ref("");
     const animelist = ref([]);
 
     const HandleSearch = async () => {
       try {
-
-        const response = await fetch(`https://api.jikan.moe/v4/anime?q=${(search_query.value)}`);
+        const response = await fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(search_query.value)}`);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const data = await response.json();
-        animelist.value = data.data;
+
+
+        const modifiedAnimeList = data.data.map(anime => ({
+          ...anime,
+          image_url: anime.images.jpg.image_url
+        }));
+        animelist.value = modifiedAnimeList;
+
       } catch (error) {
         console.error('Fehler beim Abrufen der Animes:', error);
       }
       search_query.value = "";
     }
 
+
+
     return {
-      CardComponent,
       search_query,
       animelist,
       HandleSearch
@@ -63,7 +71,6 @@ export default {
   }
 }
 </script>
-
 <style lang="scss">
 *{
   margin: 0;

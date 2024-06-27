@@ -1,4 +1,3 @@
-
 <template>
   <div class="card">
     <img :src="anime.image_url" :alt="`${anime.title} Poster`">
@@ -17,36 +16,34 @@ export default {
 }
 </script>
 
+<style scoped>
+.card {
+  flex: 1 1 33%;
+  max-width: 33%;
+  padding: 0 8px;
+  margin-bottom: 16px;
+}
 
-<style setup lang="scss" scoped>
-.cards{
-flex: 1 1 33%;
-width: 33%;
-max-width: 33%;
-padding: 0px 8px;
-margin-bottom: 16px;
-
-img {
-  widht: 100%;
+.card img {
+  width: 100%; /* Korrektur von 'widht' zu 'width' */
   height: 300px;
   object-fit: cover;
-border-radius: 16px;
-box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
-transition: 0.4s;
+  border-radius: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transition: 0.4s;
 }
-  h3 {
- padding: 16px;
-    color: #313131;
-    transition: .4s;
 
-  }
-  &:hover {
-    img {
-      transform: scale(1.05);
-    }
-    h3 {
-      color: #24C484;
-    }
-  }
+.card h3 {
+  padding: 16px;
+  color: #313131;
+  transition: .4s;
+}
+
+.card:hover img {
+  transform: scale(1.05);
+}
+
+.card:hover h3 {
+  color: #24C484;
 }
 </style>
