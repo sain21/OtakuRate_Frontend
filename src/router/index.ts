@@ -1,14 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-
-// Import your views
+import FeedView from '../views/FeedView.vue';
 import RatingOverview from '../views/RatingOverview.vue';
 import AnimeListView from '../views/AnimeListView.vue';
 import WatchlistView from '../views/WatchlistView.vue';
 import RegisterView from '../views/RegisterView.vue';
 import SignInView from '../views/SignInView.vue';
-import Feed from '../views/Feed.vue';
+import Feed from '../views/FeedView.vue';
 
 const routes = [
   {
