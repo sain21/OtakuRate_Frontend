@@ -19,15 +19,12 @@ const routes = [
   {
     path: '/about',
     name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (About.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: () => import('../views/AboutView.vue')
   },
   {
-    path: '/rate', // Define the path for the rate page
-    name: 'rate', // Give the route a name
-    component: RatingOverview // Use the RatingOverview component for this route
+    path: '/rate',
+    name: 'rate',
+    component: RatingOverview
   },
   {
     path: '/animes',
