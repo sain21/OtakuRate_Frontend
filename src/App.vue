@@ -6,6 +6,9 @@ import { RouterView } from 'vue-router'
   <div id="nav">
     <router-link to="/">Home</router-link> |
     <router-link to="/about">About</router-link> |
+    <router-link to="/rate">Rate</router-link> |
+    <router-link to="/anime">Anime</router-link> |
+    <router-link to="/watchlist">Watchlist</router-link> |
     <router-link to="/login" v-if="authState && !authState.isAuthenticated">Login</router-link>
     <router-link to="/profile" v-if="authState && authState.isAuthenticated">Protected Profile</router-link>
     <button v-if="authState && authState.isAuthenticated" v-on:click="logout()">Logout</button>
