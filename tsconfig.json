@@ -9,12 +9,10 @@
     },
     {
       "path": "./tsconfig.vitest.json"
-    },
-    {
-      "compilerOptions": {
-        "allowJs": true,
-        "noImplicitAny": false,
-
-
-      }
+    }
+  ],
+  "compilerOptions": {
+    "allowJs": true,
+    "noImplicitAny": false
+  }
 }
