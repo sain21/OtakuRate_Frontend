@@ -1,6 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { LoginCallback } from '@okta/okta-vue'
+import { navigationGuard } from '@okta/okta-vue'
 import HomeView from '../views/HomeView.vue'
-// Importieren Sie die ForumView
+import LoginComponent from '../views/LoginComponent.vue'
+import ProfileComponent from '../views/ProfileComponent.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,15 +16,12 @@ const router = createRouter({
     {
       path: '/about',
       name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue')
     },
     {
-      path: '/rate', // Definieren Sie den Pfad für das Forum
-      name: 'rate', // Geben Sie der Route einen Namen
-      component: () => import ('../views/RatingOverview.vue') // Verwenden Sie die ForumView-Komponente für diese Route
+      path: '/rate',
+      name: 'rate',
+      component: () => import ('../views/RatingOverview.vue')
     },
     {
       path: '/animes',
@@ -34,11 +34,23 @@ const router = createRouter({
       component: () => import('../views/WatchlistView.vue')
     },
     {
+      path: '/login',
+      name: 'Login',
+      component: LoginComponent
+    },
+    {
       path: '/login/callback',
-      name: 'login',
-      component: () => import('../views/LoginView.vue')
+      component: LoginCallback
+    },
+    {
+      path: '/profile',
+      component: ProfileComponent,
+      meta: {
+        requiresAuth: true
+      }
     }
   ]
 })
 
+router.beforeEach(navigationGuard)
 export default router
