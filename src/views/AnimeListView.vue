@@ -51,7 +51,7 @@ export default {
 
         const modifiedAnimeList = data.data.map(anime => ({
           ...anime,
-          image_url: anime.images.jpg.image_url
+          image_url: anime.images.jpg.large_image_url
         }));
         animelist.value = modifiedAnimeList;
 
