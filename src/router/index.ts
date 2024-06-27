@@ -34,7 +34,7 @@ const router = createRouter({
       component: () => import('../views/WatchlistView.vue')
     },
     {
-      path: '/login',
+      path: '/login/callback',
       name: 'login',
       component: () => import('../views/LoginView.vue')
     }
