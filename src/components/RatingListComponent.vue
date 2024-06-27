@@ -93,7 +93,7 @@ export default {
     },
     selectAnime(anime) {
       this.animeField = anime.title;
-      this.imageField = anime.images.jpg.image_url; // Added to store the image URL
+      this.imageField = anime.images.jpg.image_url;
       this.animeSearchQuery = '';
       this.searchResults = [];
     },
@@ -102,14 +102,14 @@ export default {
         animeTitle: this.animeField,
         rating: parseFloat(this.ratingField),
         experience: this.opinionField,
-        image: this.imageField // Store the image URL in the post
+        image: this.imageField
       };
       axios.post(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/rate', newEntry)
         .then(response => {
           this.animeField = '';
           this.ratingField = '';
           this.opinionField = '';
-          this.imageField = ''; // Clear the image URL field
+          this.imageField = '';
           this.fetchPosts();
         })
         .catch(error => {
@@ -130,14 +130,14 @@ export default {
         animeTitle: this.animeField,
         rating: parseFloat(this.ratingField),
         experience: this.opinionField,
-        image: this.imageField // Update the image URL in the post
+        image: this.imageField
       };
       axios.put(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/rate/' + entryId, updatedEntry)
         .then(() => {
           this.animeField = '';
           this.ratingField = '';
           this.opinionField = '';
-          this.imageField = ''; // Clear the image URL field
+          this.imageField = '';
           this.fetchPosts();
         })
         .catch(error => {
