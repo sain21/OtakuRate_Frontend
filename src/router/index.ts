@@ -28,6 +28,11 @@ const router = createRouter({
       name: 'animes',
       component: () => import('../views/AnimeListView.vue')
     },
+    {
+      path: '/watchlist',
+      name: 'watchlist',
+      component: () => import('../views/WatchlistView.vue')
+    }
   ]
 })
 
