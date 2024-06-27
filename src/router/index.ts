@@ -32,6 +32,11 @@ const router = createRouter({
       path: '/watchlist',
       name: 'watchlist',
       component: () => import('../views/WatchlistView.vue')
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('../views/LoginView.vue')
     }
   ]
 })

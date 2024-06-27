@@ -27,7 +27,7 @@ export default {
 }
 
 .card img {
-  width: 100%; /* Korrektur von 'widht' zu 'width' */
+  width: 100%;
   height: 300px;
   object-fit: cover;
   border-radius: 16px;

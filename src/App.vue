@@ -10,6 +10,7 @@ import { RouterView } from 'vue-router'
     <RouterLink to="/rate">Rate</RouterLink>
 <RouterLink to="/animes">Anime</RouterLink>
     <RouterLink to="/watchlist">Watchlist</RouterLink>
+    <RouterLink to=" /login">Login</RouterLink>
   </header>
   <RouterView />
 </template>
