@@ -2,7 +2,7 @@
   <div>
     <header>
       <h1>AnimeDatabase</h1>
-      
+
 
     <form class="search-box" @submit.prevent="HandleSearch">
       <input
@@ -41,7 +41,7 @@ export default {
 
     const HandleSearch = async () => {
       try {
-        // API-Aufruf mit dem Suchbegriff
+
         const response = await fetch(`https://api.jikan.moe/v4/anime?q=${(search_query.value)}`);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -106,10 +106,10 @@ margin-bottom: 30px;
     background: none;
     border: none;
     outline: none;
-    
+
     background-color: #F3f3f3;
     box-shadow: 0px 4px 8px rgba(0,0,0,0.15);
-    
+
     display: block;
     width: 100%;
     margin-bottom: 600px;
