@@ -28,7 +28,7 @@ const register = () => {
           errorMsg.value = 'Wrong Password'
           break;
         default:
-          errorMsg.value = 'Email or Password is incorrect';
+          errorMsg.value = 'Email or Password is incorrect ';
           break
       }
 
