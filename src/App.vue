@@ -1,27 +1,16 @@
-<script >
-import { onBeforeMount } from 'vue'
-import { useStore } from 'vuex'
+<script setup lang="ts">
+import { RouterView } from 'vue-router'
 
-export default {
-  setup() {
-    const store = useStore()
-
-    onBeforeMount(() => {
-      store.dispatch('fetchUser')
-    })
-  }
-}
 </script>
 
 <template>
-<div id="nav" v-if="$store.state.user">
+  <header>
     <RouterLink to="/">Home</RouterLink>
     <RouterLink to="/about">About</RouterLink>
     <RouterLink to="/rate">Rate</RouterLink>
     <RouterLink to="/animes">Anime</RouterLink>
     <RouterLink to="/watchlist">Watchlist</RouterLink>
-  <button @click="$store.dispatch('logout')">Logout</button>
-</div>
+  </header>
   <RouterView />
 </template>
 }
@@ -85,12 +74,6 @@ nav a:first-of-type {
 
     padding: 1rem 0;
     margin-top: 1rem;
-  }
-
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
   }
 }
 </style>
