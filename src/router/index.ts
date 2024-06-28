@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import { auth } from '../firebase'
+import LoginView from '../views/LoginView.vue'
 
 const routes = [
   {
