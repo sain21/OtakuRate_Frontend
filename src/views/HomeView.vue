@@ -86,75 +86,76 @@ p {
   font-size: 1.5rem;
   color: #cccccc;
 
-.news {
-  margin-top: 2rem;
-}
+  .news {
+    margin-top: 2rem;
+  }
 
-h2 {
-  font-size: 2rem;
-  color: #24C484;
-  margin-bottom: 1rem;
-}
+  h2 {
+    font-size: 2rem;
+    color: #24C484;
+    margin-bottom: 1rem;
+  }
 
-ul {
-  list-style-type: none;
-  padding: 0;
-}
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
 
-.news-item {
-  font-size: 1.2rem;
-  color: #ffffff;
-  margin-bottom: 1.5rem;
-  text-align: left;
-  background-color: #333333;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
+  .news-item {
+    font-size: 1.2rem;
+    color: #ffffff;
+    margin-bottom: 1.5rem;
+    text-align: left;
+    background-color: #333333;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
 
-.news-title {
-  color: #24C484;
-  text-decoration: none;
-  font-weight: bold;
-  display: block;
-  margin-bottom: 0.5rem;
-}
+  .news-title {
+    color: #24C484;
+    text-decoration: none;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
 
-.news-title:hover {
-  text-decoration: underline;
-}
+  .news-title:hover {
+    text-decoration: underline;
+  }
 
-.news-image {
-  width: 100%;
-  max-height: 200px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 0.5rem;
-}
+  .news-image {
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+  }
 
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 2rem;
-}
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2rem;
+  }
 
-button {
-  background-color: #24C484;
-  color: #ffffff;
-  border: none;
-  padding: 0.5rem 1rem;
-  margin: 0 1rem;
-  cursor: pointer;
-  border-radius: 4px;
-}
+  button {
+    background-color: #24C484;
+    color: #ffffff;
+    border: none;
+    padding: 0.5rem 1rem;
+    margin: 0 1rem;
+    cursor: pointer;
+    border-radius: 4px;
+  }
 
-button:disabled {
-  background-color: #555555;
-  cursor: not-allowed;
-}
+  button:disabled {
+    background-color: #555555;
+    cursor: not-allowed;
+  }
 
-span {
-  color: #cccccc;
+  span {
+    color: #cccccc;
+  }
 }
 </style>
