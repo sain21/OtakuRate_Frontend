@@ -1,157 +1,220 @@
 <template>
   <div>
     <header>
-      <h1>AnimeDatabase</h1>
-
-
-    <form class="search-box" @submit.prevent="HandleSearch">
-      <input
-        type="search"
-        class="search-field"
-        placeholder="Search for anime..."
-      required
-      v-model="search_query"/>
-    </form>
+      <h1>Anime Database</h1>
+      <form class="search-box" @submit.prevent="handleSearch">
+        <input
+          type="search"
+          class="search-field"
+          placeholder="Search for anime..."
+          v-model="searchQuery"
+        />
+        <button type="submit" class="search-button">Search</button>
+        <button type="button" class="reset-button" @click="resetSearch">X</button>
+      </form>
     </header>
+    <nav class="alphabet-nav">
+      <ul>
+        <li v-for="letter in alphabet" :key="letter" @click="searchByLetter(letter)">{{ letter }}</li>
+      </ul>
+    </nav>
     <main>
-      <div class="cards" v-if="animelist.length > 0">
+      <div class="cards" v-if="sortedAnimeList.length > 0">
         <CardComponent
-          v-for="anime in animelist"
+          v-for="anime in sortedAnimeList"
           :key="anime.mal_id"
           :anime="anime"
         />
       </div>
-  <div class="no-results" v-else>
-    <h3>No results found</h3>
-  </div>
-  </main>
+      <div class="pagination" v-if="totalPages > 1">
+        <button @click="prevPage" :disabled="currentPage === 1">Previous</button>
+        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+        <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
+      </div>
+      <div class="no-results" v-else>
+        <h3>No results found</h3>
+      </div>
+    </main>
   </div>
 </template>
 
-<script>
-import { ref } from 'vue';
+<script setup lang="ts">
+import { ref, computed, watch } from 'vue';
 import CardComponent from '@/components/CardComponent.vue';
 
-export default {
-  components: {
-    CardComponent,
-  },
-  setup() {
-    const search_query = ref("");
-    const animelist = ref([]);
+const searchQuery = ref("");
+const animeList = ref([]);
+const currentPage = ref(1);
+const totalPages = ref(1);
+const alphabet = ref(['#', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']);
 
-    const HandleSearch = async () => {
-      try {
-        const response = await fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(search_query.value)}`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const data = await response.json();
-
-
-        const modifiedAnimeList = data.data.map(anime => ({
-          ...anime,
-          image_url: anime.images.jpg.large_image_url
-        }));
-        animelist.value = modifiedAnimeList;
-
-      } catch (error) {
-        console.error('Fehler beim Abrufen der Animes:', error);
-      }
-      search_query.value = "";
+const fetchAnime = async (query = searchQuery.value) => {
+  try {
+    let url = `https://api.jikan.moe/v4/anime?page=${currentPage.value}&order_by=members&sort=desc`;
+    if (query.trim() !== "") {
+      url = `https://api.jikan.moe/v4/anime?q=${encodeURIComponent(query)}&page=${currentPage.value}&order_by=members&sort=desc`;
     }
 
-
-
-    return {
-      search_query,
-      animelist,
-      HandleSearch
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
+    const data = await response.json();
+
+    const modifiedAnimeList = data.data.map(anime => ({
+      ...anime,
+      image_url: anime.images.jpg.large_image_url
+    }));
+    animeList.value = modifiedAnimeList;
+    totalPages.value = data.pagination.last_visible_page;
+  } catch (error) {
+    console.error('Error fetching anime:', error);
   }
-}
+};
+
+watch([searchQuery, currentPage], () => fetchAnime(), { immediate: true });
+
+const sortedAnimeList = computed(() => {
+  let sortedList = [...animeList.value];
+  sortedList.sort((a, b) => b.popularity - a.popularity); // Sort by popularity descending
+  return sortedList;
+});
+
+const handleSearch = () => {
+  currentPage.value = 1; // Reset to first page when searching
+  fetchAnime();
+};
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value += 1;
+  }
+};
+
+const prevPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value -= 1;
+  }
+};
+
+const resetSearch = () => {
+  searchQuery.value = "";
+  currentPage.value = 1;
+  fetchAnime();
+};
+
+const searchByLetter = (letter) => {
+  searchQuery.value = letter === '#' ? '' : letter;
+  currentPage.value = 1;
+  fetchAnime(searchQuery.value);
+};
+
 </script>
-<style lang="scss">
-*{
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
 
-  font-family: 'Fira Sans', sans-serif;
-}
-a{
-  text-decoration: none;
-
-}
-header{
-  padding-top: 50px;
-  padding-bottom: 50px;
-}
-h1{
-  color: #888;
-  font-size: 42px;
-  font-weight:400;
+<style scoped>
+.anime-view {
   text-align: center;
-  text-transform: uppercase;
-margin-bottom: 30px;
-  strong{
-
-    color: #313131;
-  }
-  &:hover{
-    color: #313131;
-  }
 }
-.search-box{
-  display:flex;
+
+header {
+  margin-bottom: 2rem;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #24C484;
+}
+
+.search-box {
+  display: flex;
   justify-content: center;
- padding-left: 30px;
-  padding-right: 30px;
-
-  .search-field{
-    appearance: none;
-    background: none;
-    border: none;
-    outline: none;
-
-    background-color: #F3f3f3;
-    box-shadow: 0px 4px 8px rgba(0,0,0,0.15);
-
-    display: block;
-    width: 100%;
-    margin-bottom: 600px;
-    padding: 20px;
-    border-radius: 8px;
-
-    color: #313131;
-    font-size: 20px;
-
-  transition: 0.4s;
-
-    &::placeholder{
-      color: #AAA;
-    }
-    &:focus, &:valid{
-      color: #FFF;
-      background-color: #313131;
-      box-shadow: 0px 0px 0px rgba(0,0,0,0.15);
-    }
-
-
-  }
+  align-items: center;
 }
 
-main {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding-left: 30px;
-  padding-right: 30px;
+.search-field {
+  width: 50%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
 
-  .cards {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0px -8px;
+.search-button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  background: #24C484;
+  color: white;
+  cursor: pointer;
+  margin-left: 1rem;
+}
 
-  }
+.reset-button {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #ff0000;
+  color: white;
+  cursor: pointer;
+  margin-left: 0.5rem;
+}
+
+.alphabet-nav {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.alphabet-nav ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.alphabet-nav li {
+  cursor: pointer;
+  padding: 0.5rem;
+  background: #333;
+  color: #fff;
+  border-radius: 4px;
+}
+
+.alphabet-nav li:hover {
+  background: #555;
+}
+
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pagination {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pagination button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  background: #24C484;
+  color: white;
+  cursor: pointer;
+  margin: 0 0.5rem;
+}
+
+.no-results {
+  text-align: center;
+  padding: 50px;
+}
+
+.no-results h3 {
+  color: #888;
+  font-size: 1.5rem;
+  font-weight: 400;
 }
 </style>

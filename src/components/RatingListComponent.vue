@@ -1,44 +1,56 @@
 <template>
-  <div>
+  <div class="rating-list">
     <h3>{{ title }}</h3>
-    <div>
-      <input v-model="animeSearchQuery" @input="searchAnime" placeholder="Search Anime" type="text">
-      <div v-if="searchResults.length">
-        <div v-for="anime in searchResults" :key="anime.mal_id" @click="selectAnime(anime)">
-          <img :src="anime.images.jpg.image_url" alt="anime.title" />
+    <div class="search-section">
+      <input v-model="animeSearchQuery" @input="searchAnime" placeholder="Search Anime" type="text" class="search-input">
+      <div v-if="searchResults.length" class="search-results">
+        <div v-for="anime in searchResults" :key="anime.mal_id" @click="selectAnime(anime)" class="search-result-item">
+          <img :src="anime.images.jpg.image_url" :alt="anime.title" class="anime-thumbnail" />
           <p>{{ anime.title }}</p>
         </div>
       </div>
     </div>
-    <div>
-      <input v-model="animeField" placeholder="Anime Name" type="text">
-      <input v-model="ratingField" placeholder="Rating" type="number">
-      <input v-model="opinionField" placeholder="Your Opinion" type="text">
-      <button @click="addNewPost">Save</button>
+    <div class="form-section">
+      <input v-model="animeField" placeholder="Anime Name" type="text" class="form-input">
+      <input v-model="ratingField" placeholder="Rating" type="number" class="form-input">
+      <textarea v-model="opinionField" placeholder="Your Opinion" class="form-input opinion-textarea"></textarea>
+      <button @click="addNewPost" class="form-button">Save</button>
     </div>
-    <div>
+    <!-- Sorting controls right above the table -->
+    <div class="sort-section">
+      <select v-model="sortKey" class="sort-select">
+        <option value="animeTitle">Anime Name</option>
+        <option value="rating">Rating</option>
+        <option value="createdAt">Date</option>
+      </select>
+      <select v-model="sortOrder" class="sort-select">
+        <option value="asc">Ascending</option>
+        <option value="desc">Descending</option>
+      </select>
+    </div>
+    <div class="table-section">
       <table>
         <thead>
         <tr>
+          <th>Image</th>
           <th>Anime</th>
           <th>Rating</th>
           <th>Opinion</th>
-          <th>Image</th>
           <th>Actions</th>
         </tr>
         </thead>
         <tbody>
-        <tr v-if="posts.length === 0">
+        <tr v-if="sortedPosts.length === 0">
           <td colspan="5">No ratings yet</td>
         </tr>
-        <tr v-for="animeRating in posts" :key="animeRating.id">
+        <tr v-for="animeRating in sortedPosts" :key="animeRating.id">
+          <td><img :src="animeRating.image" :alt="animeRating.animeTitle" class="anime-image" /></td>
           <td>{{ animeRating.animeTitle }}</td>
           <td>{{ animeRating.rating }}</td>
           <td>{{ animeRating.experience }}</td>
-          <td><img :src="animeRating.image" alt="animeRating.animeTitle" class="anime-image" /></td>
           <td>
-            <button @click="deleteEntry(animeRating.id)">Löschen</button>
-            <button @click="updateEntry(animeRating.id)">Update</button>
+            <button @click="deleteEntry(animeRating.id)" class="action-button">Delete</button>
+            <button @click="updateEntry(animeRating.id)" class="action-button">Update</button>
           </td>
         </tr>
         </tbody>
@@ -54,13 +66,26 @@ export default {
   name: 'RatingListComponent',
   data() {
     return {
-      title: 'Anime Rating List',
+      title: 'Rating List',
+      imageField: '',
       animeField: '',
       ratingField: '',
       opinionField: '',
       posts: [],
       animeSearchQuery: '',
-      searchResults: []
+      searchResults: [],
+      sortKey: 'animeTitle',
+      sortOrder: 'asc',
+    };
+  },
+  computed: {
+    sortedPosts() {
+      return [...this.posts].sort((a, b) => {
+        let modifier = this.sortOrder === 'asc' ? 1 : -1;
+        if (a[this.sortKey] < b[this.sortKey]) return -1 * modifier;
+        if (a[this.sortKey] > b[this.sortKey]) return 1 * modifier;
+        return 0;
+      });
     }
   },
   created() {
@@ -73,11 +98,11 @@ export default {
           this.posts = response.data;
         })
         .catch(error => {
-          console.log(error);
+          console.error('Error fetching posts:', error);
         });
     },
     searchAnime() {
-      if (this.animeSearchQuery.trim() === '') {
+      if (!this.animeSearchQuery.trim()) {
         this.searchResults = [];
         return;
       }
@@ -99,18 +124,18 @@ export default {
     },
     addNewPost() {
       const newEntry = {
+        image: this.imageField,
         animeTitle: this.animeField,
         rating: parseFloat(this.ratingField),
         experience: this.opinionField,
-        image: this.imageField
       };
       axios.post(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/rate', newEntry)
         .then(response => {
+          this.fetchPosts();
+          this.imageField = '';
           this.animeField = '';
           this.ratingField = '';
           this.opinionField = '';
-          this.imageField = '';
-          this.fetchPosts();
         })
         .catch(error => {
           console.error('Error adding entry:', error);
@@ -127,17 +152,13 @@ export default {
     },
     updateEntry(entryId) {
       const updatedEntry = {
+        image: this.imageField,
         animeTitle: this.animeField,
         rating: parseFloat(this.ratingField),
         experience: this.opinionField,
-        image: this.imageField
       };
       axios.put(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/rate/' + entryId, updatedEntry)
         .then(() => {
-          this.animeField = '';
-          this.ratingField = '';
-          this.opinionField = '';
-          this.imageField = '';
           this.fetchPosts();
         })
         .catch(error => {
@@ -145,43 +166,149 @@ export default {
         });
     }
   }
-}
+};
 </script>
 
+
 <style scoped>
+.rating-list {
+  margin: 0 auto;
+  max-width: 1200px;
+  padding: 1.5rem;
+  background-color: #1e1e1e;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+}
+
 h3 {
   text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  color: #24C484;
 }
 
-table {
-  margin-left: auto;
-  margin-right: auto;
+.search-section, .form-section, .table-section {
+  margin-bottom: 1.5rem;
 }
 
-button {
-  color: blue;
+.search-input, .form-input {
+  width: 100%;
+  max-width: 600px;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
-ul {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
+.form-input {
+  resize: none;
 }
 
-li {
-  padding: 8px;
+.opinion-textarea {
+  resize: none;
+  height: 150px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.form-button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  background: #24C484;
+  color: #fff;
   cursor: pointer;
   transition: background 0.3s;
 }
 
-li:hover {
-  background: #f0f0f0;
+.form-button:hover {
+  background: #1E9F75;
+}
+
+.search-results {
+  width: 100%;
+  max-width: 600px;
+  background: #1e1e1e;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.search-result-item:hover {
+  background: #333;
+}
+
+.anime-thumbnail {
+  width: 50px;
+  height: 50px;
+  margin-right: 0.5rem;
+  border-radius: 4px;
+}
+
+.table-section {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+
+th, td {
+  padding: 0.5rem;
+  text-align: left;
+  border: 1px solid #ccc;
+}
+
+th {
+  background: #333;
 }
 
 .anime-image {
   width: 72px;
   height: 72px;
   object-fit: cover;
-  border-radius: 1rem;
+  border-radius: 8px;
+}
+
+.action-button {
+  margin-right: 0.5rem;
+  padding: 0.3rem 0.6rem;
+  border: none;
+  border-radius: 4px;
+  background: #007BFF;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.action-button:hover {
+  background: #0056b3;
+}
+
+.action-button:last-of-type {
+  margin-right: 0;
+}
+.sort-section {
+  margin-bottom: 1rem;
+  text-align: right;
+}
+
+.sort-select {
+  margin-right: 10px;
+  padding: 5px 10px;
+  background-color: #f1f1f1;
+  border-radius: 4px;
+  border: 1px solid #ccc;
 }
 </style>

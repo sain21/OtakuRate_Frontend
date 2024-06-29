@@ -1,78 +1,14 @@
-<script setup>
-import { ref, onMounted, computed } from 'vue'
-
-const query = ref('')
-const my_watchlist = ref([])
-const search_results = ref([])
-
-const my_watchlist_asc = computed(() => {
-  return my_watchlist.value.sort((a, b) => {
-    return a.title.localeCompare(b.title)
-  })
-})
-
-const searchAnime = () => {
-  const url = `https://api.jikan.moe/v4/anime?q=${query.value}`
-  fetch(url)
-    .then(res => res.json())
-    .then(data => {
-      search_results.value = data.data
-    })
-}
-
-const handleInput = (e) => {
-  if (!e.target.value) {
-    search_results.value = []
-  }
-}
-
-const addAnimetoWatchlist = (anime) => {
-  search_results.value = []
-  query.value = ''
-
-  my_watchlist.value.push({
-    id: anime.mal_id,
-    title: anime.title,
-    image: anime.images.jpg.image_url,
-    total_episodes: anime.episodes,
-    watched_episodes: 0,
-  })
-
-  localStorage.setItem('my_watchlist', JSON.stringify(my_watchlist.value))
-}
-
-const increaseWatchedEpisodes = (anime) => {
-  anime.watched_episodes++
-  localStorage.setItem('my_watchlist', JSON.stringify(my_watchlist.value))
-}
-
-const decreaseWatchedEpisodes = (anime) => {
-  anime.watched_episodes--
-  localStorage.setItem('my_watchlist', JSON.stringify(my_watchlist.value))
-}
-
-onMounted(() => {
-  my_watchlist.value = JSON.parse(localStorage.getItem('my_watchlist')) || []
-})
-
-const removeAnimeFromWatchlist = (animeToRemove) => {
-  my_watchlist.value = my_watchlist.value.filter(anime => anime.id !== animeToRemove.id)
-  localStorage.setItem('my_watchlist', JSON.stringify(my_watchlist.value))
-}
-</script>
-
 <template>
-  <main>
+  <main class="watchlist">
     <h1>Watchlist</h1>
-
-    <form @submit.prevent="searchAnime">
-      <input type="text" placeholder="Search for an anime..." v-model="query" @input="handleInput" />
-      <button type="submit" class="button">Search</button>
+    <form @submit.prevent="searchAnime" class="search-form">
+      <input type="text" placeholder="Search for an anime..." v-model="query" @input="handleInput" class="search-input"/>
+      <button type="submit" class="search-button">Search</button>
     </form>
 
     <div class="results" v-if="search_results.length > 0">
-      <div v-for="anime in search_results" class="result">
-        <img :src="anime.images.jpg.image_url" />
+      <div v-for="anime in search_results" :key="anime.mal_id" class="result">
+        <img :src="anime.images.jpg.image_url" class="anime-image"/>
         <div class="details">
           <h3>{{ anime.title }}</h3>
           <p :title="anime.synopsis" v-if="anime.synopsis">{{ anime.synopsis.slice(0, 120) }}...</p>
@@ -84,181 +20,175 @@ const removeAnimeFromWatchlist = (animeToRemove) => {
 
     <div class="myanime" v-if="my_watchlist.length > 0">
       <h2>My Anime</h2>
-
-      <div v-for="anime in my_watchlist_asc" class="anime">
-        <img :src="anime.image" />
-        <h3>{{ anime.title }}</h3>
-        <div class="flex-1"></div>
-        <span class="episodes">{{ anime.watched_episodes }} / {{ anime.total_episodes }}</span>
-
-        <button
-          v-if="anime.watched_episodes > 0"
-          @click="decreaseWatchedEpisodes(anime)" class="button">-
-        </button>
-        <button
-          v-if="anime.total_episodes !== anime.watched_episodes"
-          @click="increaseWatchedEpisodes(anime)" class="button">+
-        </button>
-        <button @click="removeAnimeFromWatchlist(anime)" class="button">Remove</button>
-
+      <div v-for="anime in my_watchlist_asc" :key="anime.id" class="anime">
+        <img :src="anime.image" class="anime-image"/>
+        <div class="anime-details">
+          <h3>{{ anime.title }}</h3>
+          <span class="episodes">{{ anime.watched_episodes }} / {{ anime.total_episodes }}</span>
+          <div class="buttons">
+            <button v-if="anime.watched_episodes > 0" @click="decreaseWatchedEpisodes(anime)" class="button">-</button>
+            <button v-if="anime.total_episodes !== anime.watched_episodes" @click="increaseWatchedEpisodes(anime)" class="button">+</button>
+            <button @click="removeAnimeFromWatchlist(anime)" class="button">Remove</button>
+          </div>
+        </div>
       </div>
     </div>
   </main>
 </template>
 
-<style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Fira Sans', sans-serif;
-}
+<script setup>
+import { ref, onMounted, computed } from 'vue';
 
-body {
-  background-color: #EEE;
-}
+const query = ref('');
+const my_watchlist = ref([]);
+const search_results = ref([]);
 
-main {
-  margin: 0 auto;
-  max-width: 768px;
-  padding: 1.5rem;
+const my_watchlist_asc = computed(() => {
+  return my_watchlist.value.sort((a, b) => a.title.localeCompare(b.title));
+});
+
+const searchAnime = () => {
+  const url = `https://api.jikan.moe/v4/anime?q=${query.value}`;
+  fetch(url)
+    .then(res => res.json())
+    .then(data => {
+      search_results.value = data.data.map(anime => ({
+        ...anime,
+        streaming_platform: anime.streaming_info?.join(', ') || 'Not available'
+      }));
+    });
+};
+
+const handleInput = (e) => {
+  if (!e.target.value) {
+    search_results.value = [];
+  }
+};
+
+const addAnimetoWatchlist = (anime) => {
+  search_results.value = [];
+  query.value = '';
+  my_watchlist.value.push({
+    id: anime.mal_id,
+    title: anime.title,
+    image: anime.images.jpg.image_url,
+    total_episodes: anime.episodes,
+    watched_episodes: 0,
+    streaming_platform: anime.streaming_platform || 'Not available'
+  });
+  localStorage.setItem('my_watchlist', JSON.stringify(my_watchlist.value));
+};
+
+const increaseWatchedEpisodes = (anime) => {
+  anime.watched_episodes++;
+  localStorage.setItem('my_watchlist', JSON.stringify(my_watchlist.value));
+};
+
+const decreaseWatchedEpisodes = (anime) => {
+  anime.watched_episodes--;
+  localStorage.setItem('my_watchlist', JSON.stringify(my_watchlist.value));
+};
+
+onMounted(() => {
+  my_watchlist.value = JSON.parse(localStorage.getItem('my_watchlist')) || [];
+});
+
+const removeAnimeFromWatchlist = (animeToRemove) => {
+  my_watchlist.value = my_watchlist.value.filter(anime => anime.id !== animeToRemove.id);
+  localStorage.setItem('my_watchlist', JSON.stringify(my_watchlist.value));
+};
+</script>
+
+<style scoped>
+.watchlist {
+  text-align: center;
 }
 
 h1 {
-  text-align: center;
+  font-size: 2.5rem;
   margin-bottom: 1.5rem;
+  color: #24C484;
 }
 
-form {
+.search-form {
   display: flex;
-  max-width: 480px;
-  margin: 0 auto 1.5rem;
+  justify-content: center;
+  align-items: center;
 }
 
-form input {
-  appearance: none;
-  outline: none;
-  border: none;
-  background: white;
+.search-input {
+  width: 50%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
 
-  display: block;
-  color: #888;
-  font-size: 1.125rem;
+.search-button {
   padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  background: #24C484;
+  color: white;
+  cursor: pointer;
+  margin-left: 1rem;
+}
+
+.results, .myanime, .recommendations {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 100%;
 }
 
-.button {
-  appearance: none;
-  outline: none;
-  border: none;
-  background: none;
-  cursor: pointer;
-
-  display: block;
-  padding: 0.5rem 1rem;
-  background-image: linear-gradient(to right, deeppink 50%, darkviolet 50%);
-  background-size: 200%;
-  color: white;
-  font-size: 1.125rem;
-  font-weight: bold;
-  text-transform: uppercase;
-  transition: 0.4s;
-}
-
-.button:hover {
-  background-position: right;
-}
-
-.results {
-  background-color: #fff;
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  max-height: 480px;
-  overflow-y: scroll;
-  margin-bottom: 1.5rem;
-}
-
-.result {
-  display: flex;
+.result, .anime, .recommendation {
+  background: #1e1e1e;
   margin: 1rem;
   padding: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  transition: 0.4s;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  width: 80%;
+  max-width: 600px;
 }
 
-.result img {
-  width: 100px;
-  border-radius: 1rem;
+.anime-image {
+  width: 80px;
+  height: auto;
+  border-radius: 8px;
   margin-right: 1rem;
 }
 
-.details {
-  flex: 1 1 0%;
+.anime-details {
   display: flex;
-  align-items: flex-start;
   flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
 }
 
-.details h3 {
-  font-size: 1.25rem;
+h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: #24C484;
+}
+
+.episodes {
+  font-size: 1rem;
+  color: #aaaaaa;
   margin-bottom: 0.5rem;
 }
 
-.details p {
-  font-size: 0.875rem;
-  margin-bottom: 1rem;
-}
-
-.details .button {
-  margin-left: auto;
-}
-
-.flex-1 {
-  display: block;
-  flex: 1 1 0%;
-}
-
-.myanime h2 {
-  color: #888;
-  font-weight: 400;
-  margin-bottom: 1.5rem;
-}
-
-.myanime .anime {
+.buttons {
   display: flex;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  background-color: #FFF;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  gap: 0.5rem;
 }
 
-.anime img {
-  width: 72px;
-  height: 72px;
-  object-fit: cover;
-  border-radius: 1rem;
-  margin-right: 1rem;
-}
-
-.anime h3 {
-  color: #888;
-  font-size: 1.125rem;
-}
-
-.anime .episodes {
-  margin-right: 1rem;
-  color: #888;
-}
-
-.anime .button:first-of-type {
-  margin-right: 0.5rem;
-}
-
-.anime .button:last-of-type {
-  margin-right: 0;
+.button {
+  padding: 0.3rem 0.6rem;
+  border: none;
+  border-radius: 4px;
+  background: #24C484;
+  color: white;
+  cursor: pointer;
 }
 </style>
