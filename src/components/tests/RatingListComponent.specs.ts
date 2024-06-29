@@ -13,11 +13,14 @@ describe('RatingListComponent', () => {
     { animeTitle: 'Bleach', rating: 7.8, experience: 'Thrilling' }
   ];
 
+  const backendUrl = import.meta.env.VITE_APP_BACKEND_BASE_URL;
+
   it('should display "No ratings yet" if list from backend is empty', async () => {
     vi.mocked(axios.get).mockResolvedValueOnce({ data: emptyResponse });
     const wrapper = shallowMount(RatingListComponent);
     await flushPromises();
     expect(wrapper.text()).toContain('No ratings yet');
+    expect(axios.get).toHaveBeenCalledWith(`${backendUrl}/rate`);
   });
 
   it('should render list from backend', async () => {
@@ -28,5 +31,6 @@ describe('RatingListComponent', () => {
     expect(wrapper.findAll('tr').length).toBe(expectedRows);
     expect(wrapper.text()).toContain('Naruto');
     expect(wrapper.text()).toContain('Bleach');
+    expect(axios.get).toHaveBeenCalledWith(`${backendUrl}/rate`);
   });
 });
