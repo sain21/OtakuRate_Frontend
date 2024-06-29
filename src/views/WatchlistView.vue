@@ -1,6 +1,17 @@
 <template>
   <main class="watchlist">
     <h1>Watchlist</h1>
+
+    <p>Willkommen auf Ihrer Anime-Watchlist-Seite! Hier können Sie Ihre eigene Watchlist erstellen und verwalten.</p>
+
+    <p><strong>1. Anime-Suche:</strong> Geben Sie den Namen eines Animes in das Suchfeld ein und klicken Sie auf "Search". Ergebnisse werden mit Bild, Titel und einer kurzen Beschreibung angezeigt. Fügen Sie Animes durch Klicken auf "Add to My Anime" zu Ihrer Watchlist hinzu.</p>
+
+    <p><strong>2. Watchlist verwalten:</strong> Ihre Animes werden unter "My Anime" angezeigt. Verfolgen Sie den Fortschritt, passen Sie die Anzahl der angesehenen Episoden an und entfernen Sie Animes bei Bedarf.</p>
+
+    <p><strong>3. Speicherung:</strong> Ihre Watchlist wird automatisch im lokalen Speicher Ihres Browsers gespeichert und beim erneuten Laden der Seite wiederhergestellt.</p>
+
+    <p>Viel Spaß beim Entdecken und Verwalten Ihrer Anime-Welt!</p>
+
     <form @submit.prevent="searchAnime" class="search-form">
       <input type="text" placeholder="Search for an anime..." v-model="query" @input="handleInput" class="search-input"/>
       <button type="submit" class="search-button">Search</button>
@@ -190,5 +201,9 @@ h3 {
   background: #24C484;
   color: white;
   cursor: pointer;
+}
+p {
+  font-size: 1.5rem;
+  color: #cccccc;
 }
 </style>

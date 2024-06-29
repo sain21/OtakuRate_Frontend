@@ -84,8 +84,7 @@ h1 {
 
 p {
   font-size: 1.5rem;
-  color: #cccccc; /* Light gray text color */
-}
+  color: #cccccc;
 
 .news {
   margin-top: 2rem;
