@@ -71,6 +71,7 @@ export default {
   data() {
     return {
       title: 'Rating List',
+      imageField: '',
       animeField: '',
       ratingField: '',
       opinionField: '',
@@ -118,116 +119,111 @@ export default {
     fetchPosts() {
       axios.get(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/rate')
         .then(response => {
-          this.posts = response.data.map(post => {
-            console.log(post.image); // Log the image URL
-            return {
-              ...post,
-              createdAt: new Date(post.createdAt)
-            };
-          });
+          this.posts = response.data.map(post => ({
+            ...post,
+            createdAt: new Date(post.createdAt)
+          }));
         })
         .catch(error => {
           console.error('Error fetching posts:', error);
         });
     },
-  },
-  searchAnime() {
-    if (!this.animeSearchQuery.trim()) {
-      this.searchResults = [];
-      return;
-    }
-    const url = `https://api.jikan.moe/v4/anime?q=${encodeURIComponent(this.animeSearchQuery)}`;
-    fetch(url)
-      .then(res => res.json())
-      .then(data => {
-        if (data.data.length === 0) {
+    searchAnime() {
+      if (!this.animeSearchQuery.trim()) {
+        this.searchResults = [];
+        return;
+      }
+      const url = `https://api.jikan.moe/v4/anime?q=${encodeURIComponent(this.animeSearchQuery)}`;
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          if (data.data.length === 0) {
+            this.searchResults = [];
+            alert('No anime found');
+          } else {
+            this.searchResults = data.data;
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching anime:', error);
           this.searchResults = [];
           alert('No anime found');
-        } else {
-          this.searchResults = data.data;
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching anime:', error);
-        this.searchResults = [];
-        alert('No anime found');
-      });
-  },
-  selectAnime(anime) {
-    this.animeField = anime.title;
-    this.imageField = anime.images.jpg.image_url;
-    this.animeSearchQuery = '';
-    this.searchResults = [];
-  },
-  addNewPost() {
-    if (this.ratingField > 100) {
-      this.ratingField = 100;
-      alert('Rating cannot be more than 100. It has been set to 100.');
-    }
-    const newEntry = {
-      image: this.imageField,
-      animeTitle: this.animeField,
-      rating: parseFloat(this.ratingField),
-      experience: this.opinionField,
-      createdAt: new Date().toISOString()
-    };
-    axios.post(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/rate', newEntry)
-      .then(response => {
-        this.fetchPosts();
-        this.clearForm();
-      })
-      .catch(error => {
-        console.error('Error adding entry:', error);
-      });
-  },
-  deleteEntry(entryId) {
-    axios.delete(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/rate/' + entryId)
-      .then(() => {
-        this.fetchPosts();
-      })
-      .catch(error => {
-        console.error('Error deleting entry:', error);
-      });
-  },
-  prepareUpdate(animeRating) {
-    this.updateId = animeRating.id;
-    this.imageField = animeRating.image;
-    this.animeField = animeRating.animeTitle;
-    this.ratingField = animeRating.rating;
-    this.opinionField = animeRating.experience;
-    this.isUpdating = true;
-  },
-  updatePost() {
-    const updatedEntry = {
-      image: this.imageField,
-      animeTitle: this.animeField,
-      rating: parseFloat(this.ratingField),
-      experience: this.opinionField,
-    };
-    axios.put(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/rate/' + this.updateId, updatedEntry)
-      .then(() => {
-        this.fetchPosts();
-        this.clearForm();
-        this.isUpdating = false;
-        this.updateId = null;
-      })
-      .catch(error => {
-        console.error('Error updating entry:', error);
-      });
-  },
-  clearForm() {
-    this.imageField = '';
-    this.animeField = '';
-    this.ratingField = '';
-    this.opinionField = '';
-    this.isUpdating = false;
-    this.updateId = null;
-  },
-  formatDate(date) {
-    const d = new Date(date);
-    return `${d.toLocaleDateString()} ${d.toLocaleTimeString()}`;
-  }
+        });
+    },
+    selectAnime(anime) {
+      this.animeField = anime.title;
+      this.imageField = anime.images.jpg.image_url;
+      this.animeSearchQuery = '';
+      this.searchResults = [];
+    },
+    addNewPost() {
+      if (this.ratingField > 100) {
+        this.ratingField = 100;
+        alert('Rating cannot be more than 100. It has been set to 100.');
+      }
+      const newEntry = {
 
+        animeTitle: this.animeField,
+        rating: parseFloat(this.ratingField),
+        experience: this.opinionField,
+        createdAt: new Date().toISOString()
+      };
+      axios.post(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/rate', newEntry)
+        .then(response => {
+          this.fetchPosts();
+          this.clearForm();
+        })
+        .catch(error => {
+          console.error('Error adding entry:', error);
+        });
+    },
+    deleteEntry(entryId) {
+      axios.delete(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/rate/' + entryId)
+        .then(() => {
+          this.fetchPosts();
+        })
+        .catch(error => {
+          console.error('Error deleting entry:', error);
+        });
+    },
+    prepareUpdate(animeRating) {
+      this.updateId = animeRating.id;
+      this.animeField = animeRating.animeTitle;
+      this.ratingField = animeRating.rating;
+      this.opinionField = animeRating.experience;
+      this.isUpdating = true;
+    },
+    updatePost() {
+      const updatedEntry = {
+
+        animeTitle: this.animeField,
+        rating: parseFloat(this.ratingField),
+        experience: this.opinionField,
+      };
+      axios.put(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/rate/' + this.updateId, updatedEntry)
+        .then(() => {
+          this.fetchPosts();
+          this.clearForm();
+          this.isUpdating = false;
+          this.updateId = null;
+        })
+        .catch(error => {
+          console.error('Error updating entry:', error);
+        });
+    },
+    clearForm() {
+
+      this.animeField = '';
+      this.ratingField = '';
+      this.opinionField = '';
+      this.isUpdating = false;
+      this.updateId = null;
+    },
+    formatDate(date) {
+      const d = new Date(date);
+      return `${d.toLocaleDateString()} ${d.toLocaleTimeString()}`;
+    }
+  }
 };
 </script>
 
