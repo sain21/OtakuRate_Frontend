@@ -27,7 +27,6 @@
       <select v-model="sortKey" class="sort-select">
         <option value="animeTitle">Anime Name</option>
         <option value="rating">Rating</option>
-        <option value="createdAt">Date</option>
       </select>
       <select v-model="sortOrder" class="sort-select">
         <option value="asc">Ascending</option>
@@ -100,17 +99,10 @@ export default {
     sortedPosts() {
       return [...this.posts].sort((a, b) => {
         let modifier = this.sortOrder === 'asc' ? 1 : -1;
-        if (this.sortKey === 'createdAt') {
-          let dateA = new Date(a[this.sortKey]);
-          let dateB = new Date(b[this.sortKey]);
-          return dateA < dateB ? -1 * modifier : dateA > dateB ? 1 * modifier : 0;
-        } else {
           if (a[this.sortKey] < b[this.sortKey]) return -1 * modifier;
           if (a[this.sortKey] > b[this.sortKey]) return 1 * modifier;
           return 0;
-        }
-      });
-    }
+    });
   },
   created() {
     this.fetchPosts();
