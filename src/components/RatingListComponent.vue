@@ -224,6 +224,7 @@ export default {
   }
 };
 </script>
+
 <style scoped>
 .rating-list {
   margin: 0 auto;
