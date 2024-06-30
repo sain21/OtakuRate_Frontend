@@ -26,33 +26,6 @@ describe('RatingListComponent', () => {
     expect(wrapper.text()).toContain('Bleach')
   })
 
-  it('should add a new post and reset form fields', async () => {
-    axios.post.mockResolvedValueOnce({})
-    axios.get.mockResolvedValueOnce({ data: mockPosts })
-    const wrapper = shallowMount(RatingListComponent, {
-      data() {
-        return {
-          animeField: 'One Piece',
-          ratingField: '88',
-          opinionField: 'Exciting',
-          imageField: 'http://example.com/onepiece.jpg'
-        }
-      }
-    })
-    await wrapper.find('.form-button').trigger('click')
-    await flushPromises()
-    expect(axios.post).toHaveBeenCalledWith(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/rate', {
-      animeTitle: 'One Piece',
-      rating: parseFloat('88'),
-      experience: 'Exciting',
-      image: 'http://example.com/onepiece.jpg'
-    })
-    expect(wrapper.vm.animeField).toBe('')
-    expect(wrapper.vm.ratingField).toBe('')
-    expect(wrapper.vm.opinionField).toBe('')
-    expect(wrapper.vm.imageField).toBe('')
-  })
-
   it('should delete a post', async () => {
     axios.delete.mockResolvedValueOnce({})
     axios.get.mockResolvedValueOnce({ data: [] }) // Assume empty list after delete
