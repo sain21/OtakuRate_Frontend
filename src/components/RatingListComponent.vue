@@ -15,7 +15,9 @@
     </div>
     <div class="form-section">
       <input v-model="animeField" placeholder="Anime Name" type="text" class="form-input">
-      <input v-model="ratingField" placeholder="Rating" type="number" class="form-input">
+      <select v-model="ratingField" class="form-input">
+        <option v-for="rating in ratings" :value="rating.value" :key="rating.value">{{ rating.text }}</option>
+      </select>
       <textarea v-model="opinionField" placeholder="Your Opinion" class="form-input opinion-textarea"></textarea>
       <button @click="addNewPost" class="form-button">Save</button>
       <button v-if="isUpdating" @click="updatePost" class="form-button">Update</button>
@@ -81,6 +83,18 @@ export default {
       sortOrder: 'asc',
       isUpdating: false,
       updateId: null,
+      ratings: [
+        { value: 100, text: '(100) Masterpiece' },
+        { value: 90, text: '(90) Great' },
+        { value: 80, text: '(80) Very Good' },
+        { value: 70, text: '(70) Good' },
+        { value: 60, text: '(60) Fine' },
+        { value: 50, text: '(50) Average' },
+        { value: 40, text: '(40) Bad' },
+        { value: 30, text: '(30) Very Bad' },
+        { value: 20, text: '(20) Horrible' },
+        { value: 10, text: '(10) Appalling' }
+      ]
     };
   },
   computed: {
@@ -137,7 +151,7 @@ export default {
     addNewPost() {
       if (this.ratingField > 100) {
         this.ratingField = 100;
-        alert('Rating can not be more than 100. It has been set to 100.');
+        alert('Rating cannot be more than 100. It has been set to 100.');
       }
       const newEntry = {
         image: this.imageField,
