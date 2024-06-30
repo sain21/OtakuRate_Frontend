@@ -230,7 +230,7 @@ export default {
       const d = new Date(date);
       return `${d.toLocaleDateString()} ${d.toLocaleTimeString()}`;
     }
-  }
+
 };
 </script>
 
