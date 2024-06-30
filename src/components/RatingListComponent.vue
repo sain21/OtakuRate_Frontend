@@ -42,18 +42,20 @@
           <th>Anime</th>
           <th>Rating</th>
           <th>Opinion</th>
+          <th>Date</th>
           <th>Actions</th>
         </tr>
         </thead>
         <tbody>
         <tr v-if="sortedPosts.length === 0">
-          <td colspan="5">No ratings yet</td>
+          <td colspan="6">No ratings yet</td>
         </tr>
         <tr v-for="animeRating in sortedPosts" :key="animeRating.id">
           <td><img :src="animeRating.image" :alt="animeRating.animeTitle" class="anime-image" /></td>
           <td>{{ animeRating.animeTitle }}</td>
           <td>{{ animeRating.rating }}</td>
           <td>{{ animeRating.experience }}</td>
+          <td>{{ formatDate(animeRating.createdAt) }}</td>
           <td>
             <button @click="deleteEntry(animeRating.id)" class="action-button">Delete</button>
             <button @click="prepareUpdate(animeRating)" class="action-button">Update</button>
@@ -120,7 +122,10 @@ export default {
     fetchPosts() {
       axios.get(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/rate')
         .then(response => {
-          this.posts = response.data;
+          this.posts = response.data.map(post => ({
+            ...post,
+            createdAt: new Date(post.createdAt)
+          }));
         })
         .catch(error => {
           console.error('Error fetching posts:', error);
@@ -158,6 +163,7 @@ export default {
         animeTitle: this.animeField,
         rating: parseFloat(this.ratingField),
         experience: this.opinionField,
+        createdAt: new Date().toISOString()
       };
       axios.post(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/rate', newEntry)
         .then(response => {
@@ -210,6 +216,10 @@ export default {
       this.opinionField = '';
       this.isUpdating = false;
       this.updateId = null;
+    },
+    formatDate(date) {
+      const d = new Date(date);
+      return `${d.toLocaleDateString()} ${d.toLocaleTimeString()}`;
     }
   }
 };
