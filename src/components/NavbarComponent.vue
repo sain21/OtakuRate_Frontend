@@ -1,14 +1,15 @@
 <template>
   <nav class="navbar">
     <RouterLink to="/" class="nav-link">Home</RouterLink>
-    <RouterLink to="/about" class="nav-link">About</RouterLink>
-    <RouterLink to="/rate" class="nav-link">Rate</RouterLink>
     <RouterLink to="/animes" class="nav-link">Anime</RouterLink>
     <RouterLink to="/watchlist" class="nav-link">Watchlist</RouterLink>
+    <RouterLink to="/rate" class="nav-link">Rate</RouterLink>
+    <RouterLink to="/about" class="nav-link">About</RouterLink>
   </nav>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+</script>
 
 <style scoped>
 .navbar {

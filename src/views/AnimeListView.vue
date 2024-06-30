@@ -32,6 +32,7 @@
     </main>
   </div>
 </template>
+
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import CardComponent from '@/components/CardComponent.vue';
@@ -123,6 +124,7 @@ const pagesToShow = computed(() => {
   return [1, ...pages, total];
 });
 </script>
+
 <style scoped>
 .anime-view {
   text-align: center;

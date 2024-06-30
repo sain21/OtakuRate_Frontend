@@ -29,7 +29,8 @@
         <img :src="anime.image" class="anime-image"/>
         <div class="anime-details">
           <h3>{{ anime.title }}</h3>
-          <span class="episodes">{{ anime.watched_episodes }} / {{ anime.total_episodes }}</span>
+          <span class="episodes">{{ anime.watched_episodes }} / {{ anime.total_episodes }} Episoden</span>
+          <span class="episode-name">{{ anime.episode_name }}</span> <!-- Neue Zeile hinzufügen -->
           <div class="buttons">
             <button v-if="anime.watched_episodes > 0" @click="decreaseWatchedEpisodes(anime)" class="button">-</button>
             <button v-if="anime.total_episodes !== anime.watched_episodes" @click="increaseWatchedEpisodes(anime)" class="button">+</button>
@@ -79,23 +80,46 @@ const addAnimetoWatchlist = (anime) => {
     image: anime.images.jpg.image_url,
     total_episodes: anime.episodes,
     watched_episodes: 0,
+    episode_name: '',
     streaming_platform: anime.streaming_platform || 'Not available'
   });
   localStorage.setItem('my_watchlist', JSON.stringify(my_watchlist.value));
 };
 
-const increaseWatchedEpisodes = (anime) => {
-  anime.watched_episodes++;
+const fetchEpisodeName = async (anime) => {
+  try {
+    const response = await fetch(`https://api.jikan.moe/v4/anime/${anime.id}/episodes`);
+    const data = await response.json();
+    const episode = data.data.find(ep => ep.mal_id === anime.watched_episodes);
+    return episode ? episode.title : 'Episode name not found';
+  } catch (error) {
+    console.error('Error fetching episode name:', error);
+    return 'Episode name not found';
+  }
+};
+
+const updateEpisodeName = async (anime) => {
+  anime.episode_name = await fetchEpisodeName(anime);
   localStorage.setItem('my_watchlist', JSON.stringify(my_watchlist.value));
 };
 
-const decreaseWatchedEpisodes = (anime) => {
+const increaseWatchedEpisodes = async (anime) => {
+  anime.watched_episodes++;
+  await updateEpisodeName(anime);
+  localStorage.setItem('my_watchlist', JSON.stringify(my_watchlist.value));
+};
+
+const decreaseWatchedEpisodes = async (anime) => {
   anime.watched_episodes--;
+  await updateEpisodeName(anime);
   localStorage.setItem('my_watchlist', JSON.stringify(my_watchlist.value));
 };
 
 onMounted(() => {
   my_watchlist.value = JSON.parse(localStorage.getItem('my_watchlist')) || [];
+  my_watchlist.value.forEach(anime => {
+    updateEpisodeName(anime);
+  });
 });
 
 const removeAnimeFromWatchlist = (animeToRemove) => {
@@ -183,6 +207,12 @@ h3 {
   margin-bottom: 0.5rem;
 }
 
+.episode-name {
+  font-size: 1rem;
+  color: #cccccc;
+  margin-bottom: 0.5rem;
+}
+
 .buttons {
   display: flex;
   gap: 0.5rem;
@@ -196,6 +226,7 @@ h3 {
   color: white;
   cursor: pointer;
 }
+
 p {
   font-size: 1.5rem;
   color: #cccccc;
