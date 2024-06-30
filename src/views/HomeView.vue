@@ -1,14 +1,13 @@
 <template>
   <div class="home">
-    <h1>Welcome to&nbsp;OtakuRate</h1>
-
+    <h1>Welcome to OtakuRate</h1>
 
     <div class="news">
       <h2>Latest Anime News</h2>
       <ul>
         <li v-for="article in paginatedNews" :key="article.mal_id" class="news-item">
-          <a :href="article.url" target="_blank" class="news-title">{{ article.title }}</a>
-          <img :src="article.image_url" :alt="article.title" class="news-image" v-if="article.image_url"/>
+          <a :href="article.url" target="_blank" class="news-title" :aria-label="'Read more about ' + article.title" v-tooltip="'Click to read more'">{{ article.title }}</a>
+          <img :src="article.image_url" :alt="article.title" class="news-image" v-if="article.image_url" loading="lazy"/>
           <p>{{ article.synopsis }}</p>
         </li>
       </ul>
@@ -20,7 +19,6 @@
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 
@@ -62,6 +60,9 @@ const scrollToTop = () => {
 onMounted(async () => {
   try {
     const response = await fetch('https://api.jikan.moe/v4/anime?q=news');
+    if (!response.ok) {
+      throw new Error('Failed to fetch news. Please try again later.');
+    }
     const data = await response.json();
     newsArticles.value = data.data.map(article => ({
       mal_id: article.mal_id,
@@ -75,14 +76,13 @@ onMounted(async () => {
   }
 });
 </script>
-
 <style scoped>
 .home {
   text-align: center;
   padding: 2rem;
-  background-color: #1e1e1e;
-  color: #ffffff;
-  min-height: 100vh; /* Ensure the page takes full height */
+  background-color: #1c1c1c;
+  color: #e0e0e0;
+  min-height: 100vh;
 }
 
 h1 {
@@ -90,12 +90,11 @@ h1 {
   margin-bottom: 1.5rem;
   color: #24C484;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  white-space: nowrap; /* Prevent line break */
+  white-space: nowrap;
 }
 
 p {
   font-size: 1.5rem;
-  color: #cccccc;
 }
 
 .news {
@@ -115,7 +114,6 @@ ul {
 
 .news-item {
   font-size: 1.2rem;
-  color: #ffffff;
   margin-bottom: 1.5rem;
   text-align: left;
   background-color: #333333;
@@ -171,7 +169,19 @@ button:disabled {
   cursor: not-allowed;
 }
 
-span {
-  color: #cccccc;
+@media (max-width: 600px) {
+  .home {
+    padding: 1rem;
+  }
+  h1, h2 {
+    font-size: 2rem;
+  }
+}
+
+@media (min-width: 1600px) {
+  .home {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
 }
 </style>

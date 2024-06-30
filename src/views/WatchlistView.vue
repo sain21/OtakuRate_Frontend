@@ -1,15 +1,16 @@
 <template>
   <main class="watchlist">
-    <h1>Meine Anime-Watchlist</h1>
+    <h1>My Anime Watchlist</h1>
 
-    <p>Willkommen auf Ihrer persönlichen Anime-Watchlist-Seite! Hier können Sie Ihre Lieblingsanimes hinzufügen, verfolgen und verwalten.</p>
-    <p>Durchsuchen Sie die Anime-Datenbank und fügen Sie neue Animes zu Ihrer Watchlist hinzu. Verwalten Sie die Anzahl der Episoden, die Sie bereits gesehen haben, und entdecken Sie neue Empfehlungen.</p>
-    <p>Viel Spaß beim Erkunden und Verwalten Ihrer Anime-Sammlung!</p>
+    <p>Welcome to your personal Anime Watchlist page! Here you can add, track, and manage your favorite animes.</p>
+    <p>Browse the Anime database and add new animes to your Watchlist. Manage the number of episodes you have watched and discover new recommendations.</p>
+    <p>Enjoy exploring and managing your Anime collection!</p>
 
     <form @submit.prevent="searchAnime" class="search-form">
-      <input type="text" placeholder="Suchen Sie nach einem Anime..." v-model="query" @input="handleInput" class="search-input"/>
-      <button type="submit" class="search-button">Suchen</button>
+      <input type="text" placeholder="Search for an anime..." v-model="query" @input="handleInput" class="search-input"/>
+      <button type="submit" class="search-button">Search</button>
     </form>
+
 
     <div class="results" v-if="search_results.length > 0">
       <div v-for="anime in search_results" :key="anime.mal_id" class="result">
@@ -18,37 +19,37 @@
           <h3>{{ anime.title }}</h3>
           <p :title="anime.synopsis" v-if="anime.synopsis">{{ anime.synopsis.slice(0, 120) }}...</p>
           <span class="flex-1"></span>
-          <button @click="addAnimetoWatchlist(anime)" class="button">Zur Watchlist hinzufügen</button>
+          <button @click="addAnimetoWatchlist(anime)" class="button">Add to Watchlist</button>
         </div>
       </div>
     </div>
 
     <div class="myanime" v-if="my_watchlist.length > 0">
-      <h2>Meine Animes</h2>
+      <h2>My Watchlist</h2>
       <div v-for="anime in my_watchlist_asc" :key="anime.id" class="anime">
         <img :src="anime.image" class="anime-image"/>
         <div class="anime-details">
           <h3>{{ anime.title }}</h3>
-          <span class="episodes">{{ anime.watched_episodes }} / {{ anime.total_episodes }} Episoden</span>
+          <span class="episodes">{{ anime.watched_episodes }} / {{ anime.total_episodes }} episodes</span>
           <span class="episode-name">{{ anime.episode_name }}</span>
           <div class="buttons">
             <button v-if="anime.watched_episodes > 0" @click="decreaseWatchedEpisodes(anime)" class="button">-</button>
             <button v-if="anime.total_episodes !== anime.watched_episodes" @click="increaseWatchedEpisodes(anime)" class="button">+</button>
-            <button @click="removeAnimeFromWatchlist(anime)" class="button">Entfernen</button>
+            <button @click="removeAnimeFromWatchlist(anime)" class="button">Remove</button>
           </div>
         </div>
       </div>
     </div>
 
     <div class="recommendations" v-if="limitedRecommendations.length > 0">
-      <h2>Empfohlene Animes</h2>
+      <h2>Recommendations</h2>
       <div v-for="anime in limitedRecommendations" :key="anime.mal_id" class="recommendation">
         <img :src="anime.images.jpg.image_url" class="anime-image"/>
         <div class="anime-details">
           <h3>{{ anime.title }}</h3>
           <p :title="anime.synopsis" v-if="anime.synopsis">{{ anime.synopsis.slice(0, 120) }}...</p>
           <span class="flex-1"></span>
-          <button @click="addAnimetoWatchlist(anime)" class="button">Zur Watchlist hinzufügen</button>
+          <button @click="addAnimetoWatchlist(anime)" class="button">Add to Watchlist</button>
         </div>
       </div>
     </div>
@@ -89,27 +90,23 @@ const handleInput = (e) => {
     search_results.value = [];
   }
 };
-const addAnimetoWatchlist = (anime) => {
-  // Überprüfen, ob der Anime bereits in der Watchlist ist
-  const isAnimeInWatchlist = my_watchlist.value.some(watchlistAnime => watchlistAnime.id === anime.mal_id);
 
-  // Wenn der Anime nicht in der Watchlist ist, fügen Sie ihn hinzu
-  if (!isAnimeInWatchlist) {
-    search_results.value = [];
-    query.value = '';
-    my_watchlist.value.push({
-      id: anime.mal_id,
-      title: anime.title,
-      image: anime.images.jpg.image_url,
-      total_episodes: anime.episodes,
-      watched_episodes: 0,
-      episode_name: '',
-      streaming_platform: anime.streaming_platform || 'Not available'
-    });
-    localStorage.setItem('my_watchlist', JSON.stringify(my_watchlist.value));
-    fetchRecommendations();
-  }
+const addAnimetoWatchlist = (anime) => {
+  search_results.value = [];
+  query.value = '';
+  my_watchlist.value.push({
+    id: anime.mal_id,
+    title: anime.title,
+    image: anime.images.jpg.image_url,
+    total_episodes: anime.episodes,
+    watched_episodes: 0,
+    episode_name: '',
+    streaming_platform: anime.streaming_platform || 'Not available'
+  });
+  localStorage.setItem('my_watchlist', JSON.stringify(my_watchlist.value));
+  fetchRecommendations();
 };
+
 const fetchEpisodeName = async (anime) => {
   try {
     const response = await fetch(`https://api.jikan.moe/v4/anime/${anime.id}/episodes`);
