@@ -9,6 +9,10 @@
           placeholder="Search for anime..."
           v-model="searchQuery"
         />
+        <select v-model="selectedGenre" class="genre-select">
+          <option value="">All Genres</option>
+          <option v-for="genre in genres" :key="genre.id" :value="genre.id">{{ genre.name }}</option>
+        </select>
         <button type="submit" class="search-button">Search</button>
         <button type="button" class="reset-button" @click="resetSearch">X</button>
       </form>
@@ -38,17 +42,28 @@ import { ref, computed, watch } from 'vue';
 import CardComponent from '@/components/CardComponent.vue';
 
 const searchQuery = ref("");
+const selectedGenre = ref("");
 const animeList = ref([]);
 const currentPage = ref(1);
 const totalPages = ref(1);
 const animePerPage = 10;
 const totalResults = ref(0);
+const genres = ref([
+  { id: 1, name: 'Action' },
+  { id: 2, name: 'Adventure' },
+  { id: 4, name: 'Comedy' },
+  { id: 8, name: 'Drama' },
+  { id: 10, name: 'Fantasy' }
+]); // Beispiel-Genres mit IDs
 
-const fetchAnime = async (query = searchQuery.value, page = currentPage.value) => {
+const fetchAnime = async (query = searchQuery.value, genre = selectedGenre.value, page = currentPage.value) => {
   try {
     let url = `https://api.jikan.moe/v4/anime?page=${page}&limit=${animePerPage}&order_by=members&sort=desc`;
     if (query.trim() !== "") {
-      url = `https://api.jikan.moe/v4/anime?q=${encodeURIComponent(query)}&page=${page}&limit=${animePerPage}&order_by=members&sort=desc`;
+      url += `&q=${encodeURIComponent(query)}`;
+    }
+    if (genre) {
+      url += `&genres=${genre}`;
     }
 
     const response = await fetch(url);
@@ -68,7 +83,7 @@ const fetchAnime = async (query = searchQuery.value, page = currentPage.value) =
   }
 };
 
-watch([searchQuery, currentPage], () => fetchAnime(), { immediate: true });
+watch([searchQuery, selectedGenre, currentPage], () => fetchAnime(), { immediate: true });
 
 const handleSearch = () => {
   currentPage.value = 1; // Reset to first page when searching
@@ -78,24 +93,25 @@ const handleSearch = () => {
 const nextPage = () => {
   if (currentPage.value < totalPages.value) {
     currentPage.value += 1;
-    fetchAnime(searchQuery.value, currentPage.value);
+    fetchAnime();
   }
 };
 
 const prevPage = () => {
   if (currentPage.value > 1) {
     currentPage.value -= 1;
-    fetchAnime(searchQuery.value, currentPage.value);
+    fetchAnime();
   }
 };
 
 const goToPage = (page: number) => {
   currentPage.value = page;
-  fetchAnime(searchQuery.value, currentPage.value);
+  fetchAnime();
 };
 
 const resetSearch = () => {
   searchQuery.value = "";
+  selectedGenre.value = "";
   currentPage.value = 1;
   fetchAnime();
 };
@@ -154,6 +170,13 @@ h1 {
 .search-field {
   width: 50%;
   padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.genre-select {
+  padding: 0.5rem;
+  margin-left: 1rem;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
