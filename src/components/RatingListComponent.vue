@@ -121,18 +121,14 @@ export default {
     fetchPosts() {
       axios.get(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/rate')
         .then(response => {
-          this.posts = response.data.map(post => {
-            console.log(post.image); // Log the image URL
-            return {
-              ...post,
-              createdAt: new Date(post.createdAt)
-            };
-          });
+          this.posts = response.data.map(post => ({
+            ...post,
+            createdAt: new Date(post.createdAt)
+          }));
         })
         .catch(error => {
           console.error('Error fetching posts:', error);
         });
-    },
     },
     searchAnime() {
       if (!this.animeSearchQuery.trim()) {
@@ -230,7 +226,7 @@ export default {
       const d = new Date(date);
       return `${d.toLocaleDateString()} ${d.toLocaleTimeString()}`;
     }
-
+  }
 };
 </script>
 
