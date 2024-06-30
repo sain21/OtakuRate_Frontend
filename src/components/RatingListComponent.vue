@@ -9,12 +9,16 @@
           <p>{{ anime.title }}</p>
         </div>
       </div>
+      <div v-else class="no-search-results">
+        <p>No anime found</p>
+      </div>
     </div>
     <div class="form-section">
       <input v-model="animeField" placeholder="Anime Name" type="text" class="form-input">
       <input v-model="ratingField" placeholder="Rating" type="number" class="form-input">
       <textarea v-model="opinionField" placeholder="Your Opinion" class="form-input opinion-textarea"></textarea>
       <button @click="addNewPost" class="form-button">Save</button>
+      <button v-if="isUpdating" @click="updatePost" class="form-button">Update</button>
     </div>
     <!-- Sorting controls right above the table -->
     <div class="sort-section">
@@ -50,7 +54,7 @@
           <td>{{ animeRating.experience }}</td>
           <td>
             <button @click="deleteEntry(animeRating.id)" class="action-button">Delete</button>
-            <button @click="updateEntry(animeRating.id)" class="action-button">Update</button>
+            <button @click="prepareUpdate(animeRating)" class="action-button">Update</button>
           </td>
         </tr>
         </tbody>
@@ -58,7 +62,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import axios from 'axios';
 
@@ -76,6 +79,8 @@ export default {
       searchResults: [],
       sortKey: 'animeTitle',
       sortOrder: 'asc',
+      isUpdating: false,
+      updateId: null,
     };
   },
   computed: {
@@ -120,6 +125,7 @@ export default {
         })
         .catch(error => {
           console.error('Error fetching anime:', error);
+          this.searchResults = [];
         });
     },
     selectAnime(anime) {
@@ -142,10 +148,7 @@ export default {
       axios.post(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/rate', newEntry)
         .then(response => {
           this.fetchPosts();
-          this.imageField = '';
-          this.animeField = '';
-          this.ratingField = '';
-          this.opinionField = '';
+          this.clearForm();
         })
         .catch(error => {
           console.error('Error adding entry:', error);
@@ -160,26 +163,43 @@ export default {
           console.error('Error deleting entry:', error);
         });
     },
-    updateEntry(entryId) {
+    prepareUpdate(animeRating) {
+      this.updateId = animeRating.id;
+      this.imageField = animeRating.image;
+      this.animeField = animeRating.animeTitle;
+      this.ratingField = animeRating.rating;
+      this.opinionField = animeRating.experience;
+      this.isUpdating = true;
+    },
+    updatePost() {
       const updatedEntry = {
         image: this.imageField,
         animeTitle: this.animeField,
         rating: parseFloat(this.ratingField),
         experience: this.opinionField,
       };
-      axios.put(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/rate/' + entryId, updatedEntry)
+      axios.put(import.meta.env.VITE_APP_BACKEND_BASE_URL + '/rate/' + this.updateId, updatedEntry)
         .then(() => {
           this.fetchPosts();
+          this.clearForm();
+          this.isUpdating = false;
+          this.updateId = null;
         })
         .catch(error => {
           console.error('Error updating entry:', error);
         });
+    },
+    clearForm() {
+      this.imageField = '';
+      this.animeField = '';
+      this.ratingField = '';
+      this.opinionField = '';
+      this.isUpdating = false;
+      this.updateId = null;
     }
   }
 };
 </script>
-
-
 <style scoped>
 .rating-list {
   margin: 0 auto;
@@ -309,6 +329,12 @@ th {
 .action-button:last-of-type {
   margin-right: 0;
 }
+
+.no-search-results {
+  color: #888;
+  margin-top: 0.5rem;
+}
+
 .sort-section {
   margin-bottom: 1rem;
   text-align: right;
