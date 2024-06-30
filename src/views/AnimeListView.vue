@@ -13,22 +13,17 @@
         <button type="button" class="reset-button" @click="resetSearch">X</button>
       </form>
     </header>
-    <nav class="alphabet-nav">
-      <ul>
-        <li v-for="letter in alphabet" :key="letter" @click="searchByLetter(letter)">{{ letter }}</li>
-      </ul>
-    </nav>
     <main>
-      <div class="cards" v-if="sortedAnimeList.length > 0">
+      <div class="cards" v-if="animeList.length > 0">
         <CardComponent
-          v-for="anime in sortedAnimeList"
+          v-for="anime in animeList"
           :key="anime.mal_id"
           :anime="anime"
         />
       </div>
       <div class="pagination" v-if="totalPages > 1">
         <button @click="prevPage" :disabled="currentPage === 1">Previous</button>
-        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+        <span v-for="page in pagesToShow" :key="page" @click="goToPage(page)" :class="{'active-page': currentPage === page}">{{ page }}</span>
         <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
       </div>
       <div class="no-results" v-else>
@@ -37,7 +32,6 @@
     </main>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import CardComponent from '@/components/CardComponent.vue';
@@ -46,13 +40,14 @@ const searchQuery = ref("");
 const animeList = ref([]);
 const currentPage = ref(1);
 const totalPages = ref(1);
-const alphabet = ref(['#', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']);
+const animePerPage = 10;
+const totalResults = ref(0);
 
-const fetchAnime = async (query = searchQuery.value) => {
+const fetchAnime = async (query = searchQuery.value, page = currentPage.value) => {
   try {
-    let url = `https://api.jikan.moe/v4/anime?page=${currentPage.value}&order_by=members&sort=desc`;
+    let url = `https://api.jikan.moe/v4/anime?page=${page}&limit=${animePerPage}&order_by=members&sort=desc`;
     if (query.trim() !== "") {
-      url = `https://api.jikan.moe/v4/anime?q=${encodeURIComponent(query)}&page=${currentPage.value}&order_by=members&sort=desc`;
+      url = `https://api.jikan.moe/v4/anime?q=${encodeURIComponent(query)}&page=${page}&limit=${animePerPage}&order_by=members&sort=desc`;
     }
 
     const response = await fetch(url);
@@ -61,24 +56,18 @@ const fetchAnime = async (query = searchQuery.value) => {
     }
     const data = await response.json();
 
-    const modifiedAnimeList = data.data.map(anime => ({
+    animeList.value = data.data.map(anime => ({
       ...anime,
       image_url: anime.images.jpg.large_image_url
     }));
-    animeList.value = modifiedAnimeList;
-    totalPages.value = data.pagination.last_visible_page;
+    totalResults.value = data.pagination.items.total;
+    totalPages.value = Math.ceil(totalResults.value / animePerPage);
   } catch (error) {
     console.error('Error fetching anime:', error);
   }
 };
 
 watch([searchQuery, currentPage], () => fetchAnime(), { immediate: true });
-
-const sortedAnimeList = computed(() => {
-  let sortedList = [...animeList.value];
-  sortedList.sort((a, b) => b.popularity - a.popularity); // Sort by popularity descending
-  return sortedList;
-});
 
 const handleSearch = () => {
   currentPage.value = 1; // Reset to first page when searching
@@ -88,13 +77,20 @@ const handleSearch = () => {
 const nextPage = () => {
   if (currentPage.value < totalPages.value) {
     currentPage.value += 1;
+    fetchAnime(searchQuery.value, currentPage.value);
   }
 };
 
 const prevPage = () => {
   if (currentPage.value > 1) {
     currentPage.value -= 1;
+    fetchAnime(searchQuery.value, currentPage.value);
   }
+};
+
+const goToPage = (page: number) => {
+  currentPage.value = page;
+  fetchAnime(searchQuery.value, currentPage.value);
 };
 
 const resetSearch = () => {
@@ -103,14 +99,30 @@ const resetSearch = () => {
   fetchAnime();
 };
 
-const searchByLetter = (letter) => {
-  searchQuery.value = letter === '#' ? '' : letter;
-  currentPage.value = 1;
-  fetchAnime(searchQuery.value);
-};
+const pagesToShow = computed(() => {
+  const pages = [];
+  const total = totalPages.value;
+  const current = currentPage.value;
+  const delta = 2;
+  const range = [];
 
+  for (let i = Math.max(2, current - delta); i <= Math.min(total - 1, current + delta); i++) {
+    range.push(i);
+  }
+
+  if (current - delta > 2) {
+    pages.push('...');
+  }
+
+  pages.push(...range);
+
+  if (current + delta < total - 1) {
+    pages.push('...');
+  }
+
+  return [1, ...pages, total];
+});
 </script>
-
 <style scoped>
 .anime-view {
   text-align: center;
@@ -118,18 +130,23 @@ const searchByLetter = (letter) => {
 
 header {
   margin-bottom: 2rem;
+  background-color: #1c1c1c;
+  padding: 1rem 0;
+  color: white;
 }
 
 h1 {
   font-size: 2.5rem;
   margin-bottom: 1rem;
   color: #24C484;
+  text-align: center;
 }
 
 .search-box {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-bottom: 1rem;
 }
 
 .search-field {
@@ -159,31 +176,6 @@ h1 {
   margin-left: 0.5rem;
 }
 
-.alphabet-nav {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 1rem;
-}
-
-.alphabet-nav ul {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  gap: 0.5rem;
-}
-
-.alphabet-nav li {
-  cursor: pointer;
-  padding: 0.5rem;
-  background: #333;
-  color: #fff;
-  border-radius: 4px;
-}
-
-.alphabet-nav li:hover {
-  background: #555;
-}
-
 .cards {
   display: flex;
   flex-wrap: wrap;
@@ -205,6 +197,16 @@ h1 {
   color: white;
   cursor: pointer;
   margin: 0 0.5rem;
+}
+
+.pagination span {
+  cursor: pointer;
+  margin: 0 0.2rem;
+}
+
+.active-page {
+  font-weight: bold;
+  text-decoration: underline;
 }
 
 .no-results {
