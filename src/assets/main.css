@@ -1,8 +1,18 @@
 @import './base.css';
 
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #121212;
+}
+
+/* App-Container auf volle Breite setzen */
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: none; /* vorher: 1280px */
+  margin: 0;       /* vorher: 0 auto */
   padding: 2rem;
   font-weight: normal;
 }
@@ -21,15 +31,14 @@ a,
   }
 }
 
+/* 🔧 Feinschliff: einspaltiges Layout auch auf großen Bildschirmen */
 @media (min-width: 1024px) {
   body {
-    display: flex;
-    place-items: center;
+    display: block;
   }
 
   #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: block;
     padding: 0 2rem;
   }
 }
